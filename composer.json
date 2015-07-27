@@ -1,8 +1,15 @@
 {
 	"name":"mooti/xizlr-core",
+
+    "repositories": [
+        {
+            "type": "vcs",
+            "url":  "git@github.com:mooti/xizlr-testable.git"
+        }
+    ],
     "require": {
     	"psr/log": "1.0.*@dev",
-		"symfony/http-foundation": "^2.7"
+        "mooti/xizlr-testable": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "4.1.*"

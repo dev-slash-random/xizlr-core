@@ -12,8 +12,37 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
      */
     public function runSucceeds()
     {
-        $application = new Application();
+        $serverVars = array(
+            'REQUEST_METHOD' => 'GET'
+        );
+        $requestVars = array();
 
-        $this->assertEquals('PONG', $application->run());
+        $response = $this->getMockBuilder('\Mooti\Xizlr\Core\Response')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $request = $this->getMockBuilder('\Mooti\Xizlr\Core\Request')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $application = $this->getMockBuilder('\Mooti\Xizlr\Core\Application')
+            ->disableOriginalConstructor()
+            ->setMethods(array('instantiate'))
+            ->getMock();
+
+        $application->expects($this->exactly(2))
+            ->method('instantiate')
+            ->withConsecutive(
+                array($this->equalTo('\Mooti\Xizlr\Core\Response')),
+                array($this->equalTo('\Mooti\Xizlr\Core\Request'), $this->equalTo($serverVars), $this->equalTo($requestVars))
+            )
+            ->will(
+                $this->onConsecutiveCalls(
+                    $this->returnValue($response),
+                    $this->returnValue($request)
+                )
+            );
+
+        $this->assertSame($response, $application->run($serverVars, $requestVars));
     }
 }
