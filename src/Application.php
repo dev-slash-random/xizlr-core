@@ -2,6 +2,8 @@
 
 namespace Mooti\Xizlr\Core;
 
+use \Mooti\Xizlr\Core\Config;
+
 #use \Xizlr\Core\System\Request;
 #use \Xizlr\Core\System\Framework;
 #use \Xizlr\Core\Exception\UnauthorizedHttpRequestException;
@@ -12,7 +14,12 @@ class Application
 {
     use \Mooti\Xizlr\Testable\Testable;
 
-    private $users = array(
+    /**
+     * @var \Mooti\Xizlr\Core\Interfaces\Framework
+     */
+    private static $framework;
+
+    /*private $users = array(
         'ken.lalobo@xizlr.net' => array(
             'username'    => 'ken.lalobo@xizlr.net',
             'password'    => 'password'
@@ -26,27 +33,22 @@ class Application
     private $singlePluralMappings = array(
         'token' => 'tokens',
         'user'  => 'users'
-    );
-
-    public function run($serverVars = array(), $requestVars = array())
+    );*/
+    
+    public function newFramework(Config $config, $serverVars = array(), $requestVars = array())
     {
-        $config   = $this->instantiate('\Mooti\Xizlr\Core\Config');
+        $framework = new \Mooti\Xizlr\Core\Framework($config, $serverVars, $requestVars);
+        self::setFramework($framework);
+        return $framework;
+    }
 
-        $logger   = $this->instantiate('\Mooti\Xizlr\Core\Logger');
-        $logger->setApplicationName($config->get('application')['name']);
+    public function run(Config $config, $serverVars = array(), $requestVars = array())
+    {
+        $framework = $this->newFramework($config, $serverVars, $requestVars);
 
-        $response = $this->instantiate('\Mooti\Xizlr\Core\Response');
         try {
-            $logger->notice('Start Processing Request');
-            $request = $this->instantiate('\Mooti\Xizlr\Core\Request', $serverVars, $requestVars);
 
-            $framework = $this->instantiate('\Mooti\Xizlr\Core\Framework', $config);
-            Framework::setFramework($framework);
-
-            $framework->setLogger($logger);
-            $framework->setRequest($request);
-
-            $resource = $this->makeResource($resourceName, $framework);
+            //$resource = $this->makeResource($resourceName, $framework);
 
             /*
             if ($this->isValidRequest($request) == false) {
@@ -87,6 +89,8 @@ class Application
                 'code'    => $code,
                 'message' => $e->getMessage()
             );*/
+
+            throw $e;
         } catch (\Exception $e) {
             /*$logger->error('Error!');
             error_log('Error!');
@@ -145,12 +149,12 @@ class Application
         }
         echo json_encode(array('response' => $response));*/
 
-        return $response;
+        //return $response;
     }
 
     public function makeResource($resourceName, Framework $framework)
     {
-        $applicationConfig = $framework->getConfig('application');
+        /*$applicationConfig = $framework->getConfig('application');
 
         $className = $applicationConfig['namespace'].'\\Resource\\'.$resourceName;
         $resource = new $className();
@@ -160,12 +164,12 @@ class Application
             return $resource;
         } else {
             throw InvalidResourceException();
-        }
+        }*/
     }
 
     public function isValidRequest(Request $request)
     {
-        $redis = new \Redis();
+        /*$redis = new \Redis();
         $redis->connect('127.0.0.1');
         $session = json_decode($redis->get('userToken:'.$request->username.':'.$request->token), true);
 
@@ -184,6 +188,22 @@ class Application
             return false;
         }
 
-        return true;
+        return true;*/
+    }
+
+    /**
+     * @param \Mooti\Xizlr\Core\Interfaces\Framework $framework
+     */
+    public static function setFramework(FrameworkInterface $framework)
+    {
+        self::$framework = $framework;
+    }
+
+    /**
+     * @return \Mooti\Xizlr\Core\Interfaces\Framework
+     */
+    public static function getFramework()
+    {
+        return self::$framework;
     }
 }
