@@ -4,11 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f10c11f022d80b9d358b956e2200bc1c",
+    "hash": "c30e7c84a3ecfc87884197f13f6ac26e",
     "packages": [
         {
             "name": "mooti/xizlr-testable",
-            "version": "dev-master",
+            "version": "0.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mooti/xizlr-testable.git",
@@ -822,8 +822,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "psr/log": 20,
-        "mooti/xizlr-testable": 20
+        "psr/log": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
