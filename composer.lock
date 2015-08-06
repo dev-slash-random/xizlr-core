@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c6aa186db34f194759822203700e702a",
+    "hash": "8b7e634630d617ccfcd9ed29cba40a3f",
     "packages": [
         {
             "name": "mooti/xizlr-testable",
