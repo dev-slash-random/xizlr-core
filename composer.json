@@ -1,6 +1,5 @@
 {
 	"name":"mooti/xizlr-core",
-
     "repositories": [
         {
             "type": "vcs",
@@ -15,9 +14,7 @@
         "phpunit/phpunit": "4.1.*"
     },
     "autoload": {
-        "psr-4": {
-            "Mooti\\Xizlr\\Core\\": "src/"
-        }
+        "psr-4": {"Mooti\\Xizlr\\Core\\": "src/"}
     },
     "config": {
         "bin-dir": "bin/"
