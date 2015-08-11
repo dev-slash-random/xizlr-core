@@ -24,11 +24,9 @@ class Framework implements FrameworkInterface
     public $config;
 
     /**
-     * @param \Mooti\Xizlr\Core\Interfaces\Config $config      The config object
-     * @param array                               $serverVars  The server variables
-     * @param array                               $requestVars The request variables
+     * @param \Mooti\Xizlr\Core\Interfaces\Config $config The config object
      */
-    public function __construct(Config $config, $serverVars = array(), $requestVars = array())
+    public function __construct(Config $config)
     {
         
         $this->config = $config;
@@ -37,14 +35,23 @@ class Framework implements FrameworkInterface
 
         $this->container = new \Pimple($config);
 
-        /*$this->dic['mooti.service.logger'] = function ($config) {
+        $resources = $configServices = $config->get('resources');
+
+        foreach ($resources as $resourceName => $resourceClass) {
+            $this->container['mooti.resource.'.$resourceName] = function ($config) use ($resourceClass) {
+                $resource = new $resourceClass();
+                return new $resource;
+            };
+        }
+
+        /*$this->container['mooti.service.logger'] = function ($config) {
             $configServices = $config->get('services');
             $logger = new $configServices['logger']['class']($config);//'\Mooti\Xizlr\Core\Logger');
             $logger->setModuleName($congfigModule['name']);
             return new $logger;
         };*/
 
-        //$request       = $this->instantiate($configServices['request']['class'], $config, $serverVars, $requestVars);//'\Mooti\Xizlr\Core\Request'
+        //$request       = $this->instantiate($configServices['request']['class'], $config, $serverVars, $postVars);//'\Mooti\Xizlr\Core\Request'
         //$response      = $this->instantiate($configServices['response']['class'], $config); //, '\Mooti\Xizlr\Core\Response');
         //$cache         = $this->instantiate($configServices['cache']['class'], $config); //, '\Mooti\Xizlr\Core\Response');
         //$session       = $this->instantiate($configServices['session']['class'], $config); //, '\Mooti\Xizlr\Core\Response');
@@ -69,5 +76,13 @@ class Framework implements FrameworkInterface
     public function setConfig($configName, array $configValue)
     {
         $this->config->setConfig($configName, $configValue);
+    }
+
+    /**
+     * @param string $resourceName The name of the resource
+     */
+    public function getResource($resourceName)
+    {
+        return $this->container['mooti.resource.'.$resourceName];
     }
 }

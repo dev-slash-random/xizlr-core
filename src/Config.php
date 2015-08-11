@@ -14,9 +14,9 @@ class Config implements ConfigInterface
 {
 
     /**
-     * @var string The application name
+     * @var string The module name
      */
-    private $applicationName;
+    private $moduleName;
 
     /**
      * @var string The environment the system is in
@@ -39,14 +39,14 @@ class Config implements ConfigInterface
     private $config;
 
     /**
-     * @param string $applicationName  The application name
+     * @param string $moduleName       The module name
      * @param string $environmentName  The environment the system is in
      * @param string $defaultConfigDir The location of the default config files
      * @param string $userConfigDir    The location of the user config files that overwrite the default config
      */
-    public function __construct($applicationName, $environmentName, $defaultConfigDir, $userConfigDir = null)
+    public function __construct($moduleName, $environmentName, $defaultConfigDir, $userConfigDir = null)
     {
-        $this->applicationName  = $applicationName;
+        $this->moduleName  = $moduleName;
         $this->environmentName  = $environmentName;
         $this->defaultConfigDir = $defaultConfigDir;
         $this->userConfigDir    = $userConfigDir;
@@ -58,8 +58,8 @@ class Config implements ConfigInterface
      */
     public function loadConfig()
     {
-        $defaultFile = $this->defaultConfigDir.'/'.$this->applicationName.'.'.$this->environmentName.'.ini';
-        $userFile    = $this->userConfigDir.'/'.$this->applicationName.'.'.$this->environmentName.'.ini';
+        $defaultFile = $this->defaultConfigDir.'/module.'.$this->moduleName.'.'.$this->environmentName.'.ini';
+        $userFile    = (empty($userConfigDir) ? null : $this->userConfigDir.'/module.'.$this->moduleName.'.'.$this->environmentName.'.ini');
 
         if (!file_exists($defaultFile)) {
             throw new ConfigException('Cannot load config as "'.$defaultFile.'" does not exist');
@@ -68,9 +68,9 @@ class Config implements ConfigInterface
         $defaultConfig = parse_ini_file($defaultFile, true, INI_SCANNER_TYPED);
         $this->config = $defaultConfig;
 
-        if (isset($userFile)) {
+        if (!empty($userFile)) {
             if (!file_exists($userFile)) {
-                throw new ConfigException('Cannot load config as "'.$userFile.'" does not exist');
+                throw new ConfigException('Cannot load config. "'.$userFile.'" does not exist');
             }
             $userConfig = parse_ini_file($userFile, true, INI_SCANNER_TYPED);
 

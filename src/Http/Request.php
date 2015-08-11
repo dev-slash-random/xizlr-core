@@ -3,7 +3,7 @@
 * Request class
 *
 */
-namespace Mooti\Xizlr\Core;
+namespace Mooti\Xizlr\Core\Http;
 
 use \Mooti\Xizlr\Core\Exception\RequestException;
 use \Mooti\Xizlr\Core\Exception\XizlrException;
@@ -25,7 +25,7 @@ class Request
     protected $username;
     protected $token;
     protected $date;
-    protected $requestVars;
+    protected $postVars;
 
     protected $authenticationMessage;
     protected $requestUri;
@@ -39,7 +39,7 @@ class Request
         self::REQUEST_METHOD_PUT
     );
 
-    public function processServerVariables($serverVars)
+    public function setServerVariables($serverVars)
     {
         $this->requestUri     = $serverVars['REQUEST_URI'];
 
@@ -88,12 +88,36 @@ class Request
         $this->authenticationMessage = $authDetails[2];
 
         if (empty($this->token) == true) {
-            $this->username = User::USERNAME_ANONYMOUS;
+            $this->username = self::USERNAME_ANONYMOUS;
         }
     }
 
-    public function processRequestVariables($requestVars)
+    public function setPostVariables($postVars)
     {
-        $this->requestVars = $requestVars;
+        $this->postVars = $postVars;
+    }
+
+    public function isValidRequest(Session $session)
+    {
+        /*$redis = new \Redis();
+        $redis->connect('127.0.0.1');
+        $session = json_decode($redis->get('userToken:'.$request->username.':'.$request->token), true);
+
+        $queryString = http_build_query($request->postVars);
+
+        //confirm that the auth message we have is valid given the request parameters
+        if ($request->authenticationMessage != \Xizlr\Core\Util::generateAuthenticatinMessage(
+            $request->requestMethod,
+            $request->requestUri,
+            $queryString,
+            $request->rawRequestHeaders['Date'],
+            $session['nonce'],
+            $session['secret'],
+            hash('sha256', $this->users[$request->username]['password'])
+        )) {
+            return false;
+        }
+
+        return true;*/
     }
 }

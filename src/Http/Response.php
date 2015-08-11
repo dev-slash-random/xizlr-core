@@ -3,7 +3,7 @@
  * Response class
  *
  */
-namespace Mooti\Xizlr\Core;
+namespace Mooti\Xizlr\Core\Http;
 
 class Response
 {
