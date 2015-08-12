@@ -50,6 +50,7 @@ class Config implements ConfigInterface
         $this->environmentName  = $environmentName;
         $this->defaultConfigDir = $defaultConfigDir;
         $this->userConfigDir    = $userConfigDir;
+        $this->loadConfig();
     }
 
     /**

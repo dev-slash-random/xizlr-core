@@ -10,6 +10,7 @@ namespace Mooti\Xizlr\Core;
 
 use \Mooti\Xizlr\Core\Interfaces\Config;
 use \Mooti\Xizlr\Core\Interfaces\Framework as FrameworkInterface;
+use Pimple\Container;
 
 class Framework implements FrameworkInterface
 {
@@ -33,9 +34,9 @@ class Framework implements FrameworkInterface
 
         $congfigModule = $config->get('module');
 
-        $this->container = new \Pimple($config);
+        $this->container = new Container(array());
 
-        $resources = $configServices = $config->get('resources');
+        $resources = $config->get('resources');
 
         foreach ($resources as $resourceName => $resourceClass) {
             $this->container['mooti.resource.'.$resourceName] = function ($config) use ($resourceClass) {

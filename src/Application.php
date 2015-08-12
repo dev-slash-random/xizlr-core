@@ -25,9 +25,17 @@ class Application
     {
         $framework = $this->newFramework($config);
 
-        try {
-            $request = $framework->getRequest();
+        $request  = $framework->getRequest();
+        $logger   = $framework->getLogger();
+        $username = $request->getUsername();
 
+        $logger->setModuleName($config->get('module')['name']);
+        $logger->setRequestId($request->getRequestId());
+        $logger->setRequestDate($request->getRequestDate());
+
+        $logger->notice('Start Request');
+
+        try {
             $request->setServerVariables($serverVars);
             $request->setPostVariables($postVars);
 
@@ -41,9 +49,11 @@ class Application
             $resourceMethod    = $router->getResourceMethod();
             $resourceArguments = $router->getResourceArguments();
 
+            $logger->notice('Run '.$resourceName.'.'.$resourceMethod . ' as "'.$username.'" with arguments: '.json_encode($resourceArguments));
+
             $resource = $this->framework->getResource($resourceName);
             
-            if ($request->getUsername() == Request::USERNAME_ANONYMOUS && !$resource->anonymousAccessAllowed()) {
+            if ($username == Request::USERNAME_ANONYMOUS && !$resource->anonymousAccessAllowed()) {
                 throw new UnauthorizedHttpRequestException('Access denied. You are not allowed to call this method');
             }
 
@@ -55,17 +65,20 @@ class Application
             $reponse->setResource($resource);
             $reponse->setSession($framework->getSession());
             $reponse->generateNewNonce();
-           
+
+            $logger->notice('Request Complete');
         } catch (HttpException $e) {
             $reponse = $this->instantiate('\Mooti\Xizlr\Core\Http\Response');
             $reponse->setResponseData(array('error'));
 
+            $logger->error('Request Failed');
         } catch (\Exception $e) {
             $reponse = $this->instantiate('\Mooti\Xizlr\Core\Http\Response');
             $reponse->setResponseData(array('error'));
 
+            $logger->critical('Request Failed');
         }
-    
+
         return $response;
     }
 

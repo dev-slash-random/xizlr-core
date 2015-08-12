@@ -12,11 +12,9 @@ use Mooti\Xizlr\Core\Interfaces\Config;
 interface Framework
 {
     /**
-     * @param \Mooti\Xizlr\Core\Interfaces\Config $config      The config object
-     * @param array                               $serverVars  The server variables
-     * @param array                               $requestVars The request variables
+     * @param \Mooti\Xizlr\Core\Interfaces\Config $config The config object
      */
-    public function __construct(Config $config, $serverVars = array(), $requestVars = array());
+    public function __construct(Config $config);
 
     /**
      * @param  string $configName The name of the config
