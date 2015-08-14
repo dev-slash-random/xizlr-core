@@ -29,9 +29,10 @@ class Application
         $logger   = $framework->getLogger();
         $username = $request->getUsername();
 
-        $logger->setModuleName($config->get('module')['name']);
+        $moduleConfig = $config->get('module');
+
+        $logger->setModuleName($moduleConfig['name']);
         $logger->setRequestId($request->getRequestId());
-        $logger->setRequestDate($request->getRequestDate());
 
         $logger->notice('Start Request');
 
@@ -47,7 +48,12 @@ class Application
 
             $resourceName      = $router->getResourceName();
             $resourceMethod    = $router->getResourceMethod();
+            $resourceVersion   = $router->getResourceVersion();
             $resourceArguments = $router->getResourceArguments();
+
+            if ($resourceVersion != $moduleConfig['version']) {
+                throw new UnauthorizedHttpRequestException('Access denied. There is a version mismatch requested "'.$resourceVersion.'" but got "'.$moduleConfig['version'].'"');
+            }
 
             $logger->notice('Run '.$resourceName.'.'.$resourceMethod . ' as "'.$username.'" with arguments: '.json_encode($resourceArguments));
 
@@ -73,10 +79,12 @@ class Application
 
             $logger->error('Request Failed');
         } catch (\Exception $e) {
-            $reponse = $this->instantiate('\Mooti\Xizlr\Core\Http\Response');
-            $reponse->setResponseData(array('error'));
+            throw $e;
+            //$reponse = $this->instantiate('\Mooti\Xizlr\Core\Http\Response');
+            //$reponse->setResponseData(array('error'));
 
-            $logger->critical('Request Failed');
+            //$logger->critical('Request Failed');
+
         }
 
         return $response;

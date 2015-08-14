@@ -16,8 +16,8 @@ use \Psr\Log\LogLevel;
 class Logger implements LoggerInterface
 {
     private $requestId;
-    private $requestTime;
-    private $appName;
+    private $requestDate;
+    private $moduleName;
 
     private $allowedLogLevels = array(
         LogLevel::EMERGENCY => LOG_EMERG,
@@ -33,19 +33,19 @@ class Logger implements LoggerInterface
     public function __construct()
     {
         $this->requestId   = \Mooti\Xizlr\Core\Util::uuidV4();
-        $this->requestTime = new \DateTime();
-        $this->appName     = 'mooti';
+        $this->requestDate = new \DateTime();
+        $this->moduleName     = 'mooti';
     }
 
     /**
      * Set the app name. This helps in identifying log entries for this application
      *
-     * @param string $appName
+     * @param string $moduleName
      * @return null
      */
-    public function setAppName($appName)
+    public function setModuleName($moduleName)
     {
-        $this->appName = $appName;
+        $this->moduleName = $moduleName;
     }
 
     /**
@@ -65,9 +65,9 @@ class Logger implements LoggerInterface
      * @param string $requestId
      * @return null
      */
-    public function setRequestTime(\DateTime $requestTime)
+    public function setRequestDate(\DateTime $requestDate)
     {
-        $this->requestTime = $requestTime;
+        $this->requestDate = $requestDate;
     }
 
      /**
@@ -196,7 +196,7 @@ class Logger implements LoggerInterface
 
             $data = array(
                 'requestId'   => $this->requestId,
-                'requestTime' => $this->requestTime->format('r'),
+                'requestDate' => $this->requestDate->format('r'),
                 'level'       => $level,
                 'message'     => $message,
                 'context'     => $context,
@@ -207,7 +207,7 @@ class Logger implements LoggerInterface
                 )
             );
 
-            $logMessage = $this->appName.'/xizlr['.getmypid().']: '.json_encode($data);
+            $logMessage = $this->moduleName.'/xizlr['.getmypid().']: '.json_encode($data);
 
             syslog($this->allowedLogLevels[$level], $logMessage);
 

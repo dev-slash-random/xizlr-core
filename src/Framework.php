@@ -11,6 +11,7 @@ namespace Mooti\Xizlr\Core;
 use \Mooti\Xizlr\Core\Interfaces\Config;
 use \Mooti\Xizlr\Core\Interfaces\Framework as FrameworkInterface;
 use Pimple\Container;
+use Http\Request;
 
 class Framework implements FrameworkInterface
 {
@@ -36,16 +37,29 @@ class Framework implements FrameworkInterface
 
         $this->container = new Container(array());
 
-        $resources = $config->get('resources');
+        $resourcesConfig = $config->get('resources');
+        $frameworkConfig = $config->get('framework');
 
-        foreach ($resources as $resourceName => $resourceClass) {
-            $this->container['mooti.resource.'.$resourceName] = function ($config) use ($resourceClass) {
+        foreach ($resourcesConfig as $resourceName => $resourceClass) {
+            $this->container['xizlr.resource.'.$resourceName] = function ($config) use ($resourceClass) {
                 $resource = new $resourceClass();
                 return new $resource;
             };
         }
 
-        /*$this->container['mooti.service.logger'] = function ($config) {
+        $requestClass = $frameworkConfig['request'];
+        $this->container['xizlr.request'] = function ($config) use ($requestClass) {
+            $resource = new $requestClass();
+            return new $resource;
+        };
+
+        $loggerClass = $frameworkConfig['logger'];
+        $this->container['xizlr.logger'] = function ($config) use ($loggerClass) {
+            $resource = new $loggerClass();
+            return new $resource;
+        };
+
+        /*$this->container['xizlr.service.logger'] = function ($config) {
             $configServices = $config->get('services');
             $logger = new $configServices['logger']['class']($config);//'\Mooti\Xizlr\Core\Logger');
             $logger->setModuleName($congfigModule['name']);
@@ -84,6 +98,22 @@ class Framework implements FrameworkInterface
      */
     public function getResource($resourceName)
     {
-        return $this->container['mooti.resource.'.$resourceName];
+        return $this->container['xizlr.resource.'.$resourceName];
+    }
+
+    /**
+     * @return \Mooti\Xizlr\Core\Interfaces\Request
+     */
+    public function getRequest()
+    {
+        return $this->container['xizlr.request'];
+    }
+
+    /**
+     * @return \Mooti\Xizlr\Core\Interfaces\Logger
+     */
+    public function getLogger()
+    {
+        return $this->container['xizlr.logger'];
     }
 }

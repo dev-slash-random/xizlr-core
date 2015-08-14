@@ -21,6 +21,7 @@ class Request
     const REQUEST_METHOD_PUT    = 'put';
 
     protected $requestMethod;
+    protected $requestId;
     protected $headers = array();
     protected $username;
     protected $token;
@@ -39,6 +40,11 @@ class Request
         self::REQUEST_METHOD_PUT
     );
 
+    public function __construct()
+    {
+        $this->requestId = \Mooti\Xizlr\Core\Util::uuidV4();
+    }
+
     public function setServerVariables($serverVars)
     {
         $this->requestUri     = $serverVars['REQUEST_URI'];
@@ -49,12 +55,12 @@ class Request
 
         $this->requestMethod  = $serverVars['REQUEST_METHOD'];
 
-        if (empty($serverVars['HTTP_DATE'])) {
+        if (empty($serverVars['REQUEST_TIME'])) {
             throw new RequestException('The request date is empty');
         }
 
         try {
-            $this->date = new \DateTime($serverVars['HTTP_DATE']);
+            $this->date = new \DateTime($serverVars['REQUEST_TIME']);
         } catch (\Exception $e) {
             throw new XizlrException($e->getMessage(), Status::HTTP_BAD_REQUEST, 'The request date is in an invalid format');
         }
@@ -69,6 +75,10 @@ class Request
             if (substr($name, 0, 5) == 'HTTP_') {
                 $this->headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
             }
+        }
+
+        if (empty($this->headers['Authorization'])) {
+            throw new AuthorizationTypeException("Authorization header not set");
         }
 
         $authParts = explode(' ', $this->headers['Authorization']);
@@ -119,5 +129,21 @@ class Request
         }
 
         return true;*/
+        return false;
+    }
+
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    public function getRequestId()
+    {
+        return $this->requestId;
+    }
+
+    public function getRequestDate()
+    {
+        return $this->date;
     }
 }

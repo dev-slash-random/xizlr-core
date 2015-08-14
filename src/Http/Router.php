@@ -15,6 +15,7 @@ class Router
 
     protected $resourceName;
     protected $resourceMethod;
+    protected $resourceVersion;
     protected $resourceArguments;
 
     public function __construct($httpMethod, $uri, array $postVars = array())
@@ -42,9 +43,8 @@ class Router
             if ($this->httpMethod == 'get') {
                 $this->resourceMethod = 'get'.$inflector->camelize($resourcePlural);
             }
-            $this->resourceArguments = array(
-                'version' => $version
-            );
+
+            $this->resourceVersion = $version;
         }
     }
 
@@ -55,6 +55,10 @@ class Router
     public function getResourceMethod()
     {
         return $this->resourceMethod;
+    }
+    public function getResourceVersion()
+    {
+        return $this->resourceVersion;
     }
     public function getResourceArguments()
     {
