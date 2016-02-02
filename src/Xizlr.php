@@ -26,7 +26,7 @@ trait Xizlr
     /**
      * @return Framework The current framework being used
      */
-    public function getFramework(): Framework
+    public function getFramework()
     {
         return $this->framework;
     }
@@ -46,7 +46,7 @@ trait Xizlr
      *
      * @return object The new class
      */
-    public function createNew(string $className)
+    public function createNew($className)
     {
         $object = $this->_createNew($className);
         
