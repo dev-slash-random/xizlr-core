@@ -9,34 +9,53 @@
 */
 namespace Mooti\Xizlr\Core;
 
-use Mooti\Xizlr\Core\Application;
+use Mooti\Xizlr\Testable\Testable;
+use Mooti\Xizlr\Core\Framework;
 
 trait Xizlr
 {
-    /**
-     * @return \Mooti\Xizlr\Core\Interfaces\Framework The current framework being used
-     */
-    public function getFramework()
-    {
-        return Application::getFramework();
+    use Testable {
+        Testable::createNew as _createNew;
     }
 
     /**
-     * @param string $configName The name of the config
-
-     * @return array The config as an array
+     * @var Framework $framework
      */
-    public function getConfig($configName)
+    protected $framework;
+
+    /**
+     * @return Framework The current framework being used
+     */
+    public function getFramework(): Framework
     {
-        return Application::getFramework()->getConfig($configName);
+        return $this->framework;
     }
 
     /**
-     * @param string $configName  The name of the config
-     * @param array  $configValue  The value of the config
+     * @param Framework $framework The frameowrk
      */
-    public function setConfig($configName, array $configValue)
+    public function setFramework(Framework $framework)
     {
-         Application::getFramework()->setConfig($configName, $configValue);
+         $this->framework = $framework;
+    }
+
+    /**
+     * Create a new instance of a given class
+     *
+     * @param string $className The class to create
+     *
+     * @return object The new class
+     */
+    public function createNew(string $className)
+    {
+        $object = $this->_createNew($className);
+        
+        $traits = class_uses($object);
+
+        if (isset($traits[Xizlr::class]) == true) {
+            $object->setFramework($this->framework);
+        }
+
+        return $object;
     }
 }

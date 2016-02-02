@@ -1,18 +1,23 @@
 {
-	"name":"mooti/xizlr-core",
+    "name":"mooti/xizlr-core",
+    "license": "Apache-2.0",
     "require": {
-    	"psr/log": "1.0.*@dev",
-        "mooti/xizlr-testable": "0.0.*",
-		"pimple/pimple": "~3.0",
-		"icanboogie/inflector": "^1.3"
+        "psr/log": "1.0.*@dev",
+        "mooti/xizlr-testable": "1.0.*",
+        "pimple/pimple": "~3.0",
+        "icanboogie/inflector": "^1.3"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.1.*"
+        "phpunit/phpunit": "5.1.*",        
+        "satooshi/php-coveralls": "dev-master"
     },
     "autoload": {
         "psr-4": {"Mooti\\Xizlr\\Core\\": "src/"}
     },
+    "autoload-dev": {
+        "psr-4": {"Mooti\\Test\\Xizlr\\Core\\": "test/"}
+    },
     "config": {
-        "bin-dir": "bin/"
+        "bin-dir": "bin/vendor/"
     }
 }
