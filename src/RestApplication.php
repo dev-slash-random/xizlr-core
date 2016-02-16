@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use League\Route\RouteCollection;
 
-class WebApplication
+class RestApplication
 {
     use Xizlr;
 
