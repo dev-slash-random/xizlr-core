@@ -8,7 +8,7 @@
 
 namespace Mooti\Xizlr\Core;
 
-use League\Container\Container;
+use Interop\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use League\Route\RouteCollection;
