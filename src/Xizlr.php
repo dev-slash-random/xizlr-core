@@ -2,7 +2,7 @@
 /*
 * Main xizlr trait
 *
-* Use this in order to use the framework
+* Use this in order to use the container
 *
 * @author Ken Lalobo
 *
@@ -10,7 +10,7 @@
 namespace Mooti\Xizlr\Core;
 
 use Mooti\Xizlr\Testable\Testable;
-use Mooti\Xizlr\Core\Framework;
+use Interop\Container\ContainerInterface;
 
 trait Xizlr
 {
@@ -19,24 +19,24 @@ trait Xizlr
     }
 
     /**
-     * @var Framework $framework
+     * @var ContainerInterface $container
      */
-    protected $framework;
+    private $container;
 
     /**
-     * @return Framework The current framework being used
+     * @return ContainerInterface The current container being used
      */
-    public function getFramework()
+    public function getContainer()
     {
-        return $this->framework;
+        return $this->container;
     }
 
     /**
-     * @param Framework $framework The frameowrk
+     * @param ContainerInterface $container The container
      */
-    public function setFramework(Framework $framework)
+    public function setContainer(ContainerInterface $container)
     {
-         $this->framework = $framework;
+         $this->container = $container;
     }
 
     /**
@@ -53,9 +53,21 @@ trait Xizlr
         $traits = class_uses($object);
 
         if (isset($traits[Xizlr::class]) == true) {
-            $object->setFramework($this->framework);
+            $object->setContainer($this->container);
         }
 
         return $object;
+    }
+
+    /**
+     * Get a service from the container
+     *
+     * @param string $serviceName The service name
+     *
+     * @return object The service
+     */
+    public function getService($serviceName)
+    {
+        return $this->container[$serviceName];
     }
 }

@@ -4,7 +4,7 @@ namespace Mooti\Xizlr\Core;
 require dirname(__FILE__).'/../vendor/autoload.php';
 
 use Mooti\Xizlr\Core\Xizlr;
-use Mooti\Xizlr\Core\Framework;
+use Interop\Container\ContainerInterface;
 use Mooti\Test\Xizlr\Core\TestClassNoXizlr;
 use Mooti\Test\Xizlr\Core\TestClassWithXizlr;
 
@@ -16,13 +16,13 @@ class XizlrTest extends \PHPUnit_Framework_TestCase
     public function setterAnGetterSucceeds()
     {
         $xizlr     = $this->getMockForTrait(Xizlr::class);
-        $framework = $this->getMockBuilder(Framework::class)
+        $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $xizlr->setFramework($framework);
+        $xizlr->setContainer($container);
         
-        self::assertSame($framework, $xizlr->getFramework());
+        self::assertSame($container, $xizlr->getContainer());
     }
 
     /**
@@ -42,16 +42,16 @@ class XizlrTest extends \PHPUnit_Framework_TestCase
     {
         $xizlr = $this->getMockForTrait(Xizlr::class);
 
-        $framework = $this->getMockBuilder(Framework::class)
+        $container = $this->getMockBuilder(ContainerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $xizlr->setFramework($framework);
+        $xizlr->setContainer($container);
 
         $newObject = $xizlr->createNew(TestClassWithXizlr::class);
 
         self::assertInstanceOf(TestClassWithXizlr::class, $newObject);
 
-        self::assertSame($framework, $newObject->getFramework());
+        self::assertSame($container, $newObject->getContainer());
     }
 }
