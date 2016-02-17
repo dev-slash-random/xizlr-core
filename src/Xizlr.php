@@ -21,7 +21,7 @@ trait Xizlr
     /**
      * @var ContainerInterface $container
      */
-    private $container;
+    protected $container;
 
     /**
      * @return ContainerInterface The current container being used

@@ -1,23 +1,54 @@
 <?php
-/*
+/**
+ * Container
  *
- * @author Ken Lalobo
+ * A simple Container Interop wrapper for pimple.
  *
- */
+ * @package      Xizlr
+ * @subpackage   Core     
+ * @author       Ken Lalobo <ken@mooti.io>
+ */ 
 
 namespace Mooti\Xizlr\Core;
 
+use Pimple\Container as PimpleContainer;
 use Interop\Container\ContainerInterface;
 
-class Container implements ContainerInterface
+use Mooti\Xizlr\Core\Exception\ContainerNotFoundException;
+
+class Container extends PimpleContainer implements ContainerInterface
 {
+    /**
+     * Finds an entry of the container by its identifier and returns it.
+     *
+     * @param string $id Identifier of the entry to look for.
+     *
+     * @throws NotFoundException  No entry was found for this identifier.
+     * @throws ContainerException Error while retrieving the entry.
+     *
+     * @return mixed Entry.
+     */
     public function get($id)
     {
-        return null;
+        if ($this->offsetExists($id) == false) {
+            throw new ContainerNotFoundException('id '.$id.' was not found in the container');
+        }
+        return $this->offsetGet($id);
     }
 
+    /**
+     * Returns true if the container can return an entry for the given identifier.
+     * Returns false otherwise.
+     * 
+     * `has($id)` returning true does not mean that `get($id)` will not throw an exception.
+     * It does however mean that `get($id)` will not throw a `NotFoundException`.
+     *
+     * @param string $id Identifier of the entry to look for.
+     *
+     * @return boolean
+     */
     public function has($id)
     {
-        return false;
+        return $this->offsetExists($id);
     }
 }

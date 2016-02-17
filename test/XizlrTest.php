@@ -1,5 +1,5 @@
 <?php
-namespace Mooti\Xizlr\Core;
+namespace Mooti\Test\Xizlr\Core;
 
 require dirname(__FILE__).'/../vendor/autoload.php';
 
