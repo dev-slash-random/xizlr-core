@@ -5,9 +5,9 @@
  * Base class for controllers. Extend this with you own controller.
  *
  * @package      Xizlr
- * @subpackage   Core     
+ * @subpackage   Core
  * @author       Ken Lalobo <ken@mooti.io>
- */ 
+ */
 
 namespace Mooti\Xizlr\Core;
 
@@ -17,10 +17,11 @@ use Symfony\Component\HttpFoundation\Response;
 class BaseController
 {
     use Xizlr;
+
     /**
      * Renders any given content. It uses the current serializer to turn the data into json.
-     * 
-     * @param mixed content This can be serializable data type. 
+     *
+     * @param mixed content This can be serializable data type.
      *
      * @return Response $response
      */

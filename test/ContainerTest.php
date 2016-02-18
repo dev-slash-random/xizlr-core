@@ -22,12 +22,12 @@ class ConatinerTest extends \PHPUnit_Framework_TestCase
 
         $container->expects(self::once())
             ->method('offsetExists')
-            ->with($id)
+            ->with(self::equalTo($id))
             ->will(self::returnValue(true));
 
         $container->expects(self::once())
             ->method('offsetGet')
-            ->with($id)
+            ->with(self::equalTo($id))
             ->will(self::returnValue($object));
 
         self::assertSame($object, $container->get($id));
@@ -48,7 +48,7 @@ class ConatinerTest extends \PHPUnit_Framework_TestCase
 
         $container->expects(self::once())
             ->method('offsetExists')
-            ->with($id)
+            ->with(self::equalTo($id))
             ->will(self::returnValue(false));
 
         $container->get($id);
@@ -68,7 +68,7 @@ class ConatinerTest extends \PHPUnit_Framework_TestCase
 
         $container->expects(self::once())
             ->method('offsetExists')
-            ->with($id)
+            ->with(self::equalTo($id))
             ->will(self::returnValue(true));
 
         self::assertSame(true, $container->has($id));

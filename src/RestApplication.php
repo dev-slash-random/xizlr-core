@@ -20,17 +20,18 @@ class RestApplication
 
     private $controllers;
 
+    public function __construct(array $controllers)
+    {
+        $this->controllers = $controllers;
+    }
+
     public function createRequest()
     {
         return Request::createFromGlobals();
     }
 
-    public function setControllers(array $controllers)
+    public function registerServices(\ArrayAccess $container)
     {
-        $this->controllers = $controllers;
-    }
-
-    public function registerServices(\ArrayAccess $container){
         $services = Services::getDefinitions();
         foreach ($services as $id => $service) {
             $container[$id] = $service;
@@ -38,37 +39,35 @@ class RestApplication
         return $container;
     }
 
-    public function run(array $controllers, ContainerInterface $container = null)
+    public function run(ContainerInterface $container = null)
     {
-        $this->controllers = $controllers;
-
         if (isset($container) == false) {
-            $container = $this->registerServices($this->createNew(Container::class));            
+            $container = $this->registerServices($this->createNew(Container::class));
         }
         
         $this->setContainer($container);
 
-        $router = $this->createNew(RouteCollection::class);
+        $routeCollection = $this->createNew(RouteCollection::class);
 
-        $router->addRoute('GET', '/{resource}', [$this, 'callGetResources']);
-        $router->addRoute('POST', '/{resource}', [$this, 'callCreateNewResource']);
-        $router->addRoute('PUT',  '/{resource}', [$this, 'callCreateNewResource']);
-        $router->addRoute('HEAD', '/{resource}', [$this, 'callMethodNotAllowed']);
-        $router->addRoute('DEL', '/{resource}', [$this, 'callMethodNotAllowed']);
+        $routeCollection->addRoute('GET', '/{resource}', [$this, 'callGetResources']);
+        $routeCollection->addRoute('POST', '/{resource}', [$this, 'callCreateNewResource']);
+        $routeCollection->addRoute('PUT', '/{resource}', [$this, 'callCreateNewResource']);
+        $routeCollection->addRoute('HEAD', '/{resource}', [$this, 'callMethodNotAllowed']);
+        $routeCollection->addRoute('DEL', '/{resource}', [$this, 'callMethodNotAllowed']);
 
-        $router->addRoute('GET', '/{resource}/{id}', [$this, 'callGetResource']);
-        $router->addRoute('POST', '/{resource}/{id}', [$this, 'callEditResource']);
-        $router->addRoute('PUT',  '/{resource}/{id}', [$this, 'callEditResource']);
-        $router->addRoute('HEAD', '/{resource}/{id}', [$this, 'callResourceExists']);
-        $router->addRoute('DEL', '/{resource}/{id}', [$this, 'calldDeleteResource']);
+        $routeCollection->addRoute('GET', '/{resource}/{id}', [$this, 'callGetResource']);
+        $routeCollection->addRoute('POST', '/{resource}/{id}', [$this, 'callEditResource']);
+        $routeCollection->addRoute('PUT', '/{resource}/{id}', [$this, 'callEditResource']);
+        $routeCollection->addRoute('HEAD', '/{resource}/{id}', [$this, 'callResourceExists']);
+        $routeCollection->addRoute('DEL', '/{resource}/{id}', [$this, 'calldDeleteResource']);
 
-        $router->addRoute('GET', '/{resource}/{id}/{child}', [$this, 'callGetChildResources']);
-        $router->addRoute('POST', '/{resource}/{id}/{child}', [$this, 'callCreateNewChildResource']);
-        $router->addRoute('PUT',  '/{resource}/{id}/{child}', [$this, 'callCreateNewChildResource']);
-        $router->addRoute('HEAD', '/{resource}/{id}/{child}', [$this, 'callMethodNotAllowed']);
-        $router->addRoute('DEL', '/{resource}/{id}/{child}', [$this, 'callMethodNotAllowed']);
+        $routeCollection->addRoute('GET', '/{resource}/{id}/{child}', [$this, 'callGetChildResources']);
+        $routeCollection->addRoute('POST', '/{resource}/{id}/{child}', [$this, 'callCreateNewChildResource']);
+        $routeCollection->addRoute('PUT', '/{resource}/{id}/{child}', [$this, 'callCreateNewChildResource']);
+        $routeCollection->addRoute('HEAD', '/{resource}/{id}/{child}', [$this, 'callMethodNotAllowed']);
+        $routeCollection->addRoute('DEL', '/{resource}/{id}/{child}', [$this, 'callMethodNotAllowed']);
 
-        $dispatcher = $router->getDispatcher();
+        $dispatcher = $routeCollection->getDispatcher();
 
         $request = $this->createRequest();
 
@@ -78,14 +77,14 @@ class RestApplication
     }
 
     public function getController($resource)
-    {        
+    {
         if (isset($this->controllers[$resource]) == false) {
             throw new ControllerNotFoundException('the controller '.$this->controllers[$resource].' does not exist');
         }
 
         $controller = $this->createNew($this->controllers[$resource]);
 
-        if (!$controller instanceof AbstractController) {
+        if (!$controller instanceof BaseController) {
             throw new InvalidControllerException('the controller '.$this->controllers[$resource].' is not an instance of AbstractController');
         }
 
@@ -99,7 +98,7 @@ class RestApplication
         if (method_exists($controller, $methodName) == false) {
             throw new InvalidMethodException('The method ('.$methodName.') does not exist for the class '.get_class($controller));
         }
-        return call_user_func_array([$controller, $methodName], $arguments); 
+        return call_user_func_array([$controller, $methodName], $arguments);
     }
 
     public function callGetResources(Request $request, Response $response, array $args)
@@ -190,4 +189,3 @@ class RestApplication
         throw new MethodNotAllowedException('The method ('.$methodName.') does not exist for the class '.get_class($controller));
     }
 }
-
