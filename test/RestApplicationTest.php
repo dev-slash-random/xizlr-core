@@ -5,6 +5,7 @@ require dirname(__FILE__).'/../vendor/autoload.php';
 
 use Mooti\Xizlr\Core\RestApplication;
 use Mooti\Xizlr\Core\Container;
+use Mooti\Xizlr\Core\CompositeContainer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Interop\Container\ContainerInterface;
@@ -85,6 +86,14 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $compositeContainer = $this->getMockBuilder(CompositeContainer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $compositeContainer->expects(self::once())
+            ->method('addContainer')
+            ->with(self::equalTo($container));
+
         $routeCollection = $this->getMockBuilder(RouteCollection::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -118,13 +127,14 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
                 ['DEL', '/{resource}/{id}/{child}', [$restApplication, 'callMethodNotAllowed']]
             );
 
-        $restApplication->expects(self::exactly(2))
+        $restApplication->expects(self::exactly(3))
             ->method('createNew')
             ->withConsecutive(
+                [CompositeContainer::class],
                 [Container::class],
                 [RouteCollection::class]
             )
-            ->will(self::onConsecutiveCalls($container, $routeCollection));
+            ->will(self::onConsecutiveCalls($compositeContainer, $container, $routeCollection));
 
         $restApplication->expects(self::once())
             ->method('registerServices')
@@ -133,7 +143,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication->expects(self::once())
             ->method('setContainer')
-            ->with(self::equalTo($container));
+            ->with(self::equalTo($compositeContainer));
 
         $restApplication->expects(self::once())
             ->method('createRequest')
@@ -153,7 +163,6 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $controller =  $this->getMockBuilder(BaseController::class)
             ->disableOriginalConstructor()
-            ->setMethods(['createNew'])
             ->getMock();
 
         $restApplication = $this->getMockBuilder(RestApplication::class)

@@ -41,11 +41,15 @@ class RestApplication
 
     public function run(ContainerInterface $container = null)
     {
-        if (isset($container) == false) {
-            $container = $this->registerServices($this->createNew(Container::class));
+        $compositeContainer = $this->createNew(CompositeContainer::class);
+        if (isset($container) == true) {
+            $compositeContainer->addContainer($container);
         }
-        
-        $this->setContainer($container);
+
+        $xizlrContainer = $this->registerServices($this->createNew(Container::class));
+        $compositeContainer->addContainer($xizlrContainer);
+
+        $this->setContainer($compositeContainer);
 
         $routeCollection = $this->createNew(RouteCollection::class);
 

@@ -14,9 +14,7 @@ use Interop\Container\ContainerInterface;
 
 trait Xizlr
 {
-    use Testable {
-        Testable::createNew as _createNew;
-    }
+    use Testable;
 
     /**
      * @var ContainerInterface $container
@@ -60,14 +58,14 @@ trait Xizlr
     }
 
     /**
-     * Get a service from the container
+     * Get an item from from the container
      *
-     * @param string $serviceName The service name
+     * @param string $id The Id of the item
      *
-     * @return object The service
+     * @return mixed The item
      */
-    public function getService($serviceName)
+    public function get($id)
     {
-        return $this->container[$serviceName];
+        return $this->container->get($id);
     }
 }
