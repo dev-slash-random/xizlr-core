@@ -1,8 +1,7 @@
 <?php
 /**
- * ContainerNotFoundException
+ * ControllerNotFoundException
  *
- * Extends the Interop/NotFoundException
  *
  * @package      Xizlr
  * @subpackage   Core     
@@ -13,6 +12,6 @@ namespace Mooti\Xizlr\Core\Exception;
 
 use Interop\Container\Exception\NotFoundException;
 
-class ContainerNotFoundException extends \Exception implements NotFoundException
+class ControllerNotFoundException extends \Exception implements NotFoundException
 {
 }

@@ -31,6 +31,49 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function createRouteCollectionSucceeds()
+    {
+
+        $routeCollection = $this->getMockBuilder(RouteCollection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['createNew'])
+            ->getMock();
+
+        $routeCollection->expects(self::exactly(15))
+            ->method('addRoute')
+            ->withConsecutive(
+                ['GET', '/{resource}', [$restApplication, 'callGetResources']],
+                ['POST', '/{resource}', [$restApplication, 'callCreateNewResource']],
+                ['PUT', '/{resource}', [$restApplication, 'callCreateNewResource']],
+                ['HEAD', '/{resource}', [$restApplication, 'callMethodNotAllowed']],
+                ['DEL', '/{resource}', [$restApplication, 'callMethodNotAllowed']],
+                ['GET', '/{resource}/{id}', [$restApplication, 'callGetResource']],
+                ['POST', '/{resource}/{id}', [$restApplication, 'callEditResource']],
+                ['PUT', '/{resource}/{id}', [$restApplication, 'callEditResource']],
+                ['HEAD', '/{resource}/{id}', [$restApplication, 'callResourceExists']],
+                ['DEL', '/{resource}/{id}', [$restApplication, 'calldDeleteResource']],
+                ['GET', '/{resource}/{id}/{child}', [$restApplication, 'callGetChildResources']],
+                ['POST', '/{resource}/{id}/{child}', [$restApplication, 'callCreateNewChildResource']],
+                ['PUT', '/{resource}/{id}/{child}', [$restApplication, 'callCreateNewChildResource']],
+                ['HEAD', '/{resource}/{id}/{child}', [$restApplication, 'callMethodNotAllowed']],
+                ['DEL', '/{resource}/{id}/{child}', [$restApplication, 'callMethodNotAllowed']]
+            );
+
+        $restApplication->expects(self::once())
+            ->method('createNew')
+            ->with(self::equalTo(RouteCollection::class))
+            ->will(self::returnValue($routeCollection));
+
+        self::assertSame($routeCollection, $restApplication->createRouteCollection());
+    }
+
+    /**
+     * @test
+     */
     public function registerServicesSucceeds()
     {
         $arrayObject = new \ArrayObject;
@@ -104,37 +147,20 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication = $this->getMockBuilder(RestApplication::class)
             ->disableOriginalConstructor()
-            ->setMethods(['createNew', 'registerServices', 'setContainer', 'createRequest'])
+            ->setMethods(['createNew', 'createRouteCollection', 'registerServices', 'setContainer', 'createRequest'])
             ->getMock();
 
-        $routeCollection->expects(self::exactly(15))
-            ->method('addRoute')
-            ->withConsecutive(
-                ['GET', '/{resource}', [$restApplication, 'callGetResources']],
-                ['POST', '/{resource}', [$restApplication, 'callCreateNewResource']],
-                ['PUT', '/{resource}', [$restApplication, 'callCreateNewResource']],
-                ['HEAD', '/{resource}', [$restApplication, 'callMethodNotAllowed']],
-                ['DEL', '/{resource}', [$restApplication, 'callMethodNotAllowed']],
-                ['GET', '/{resource}/{id}', [$restApplication, 'callGetResource']],
-                ['POST', '/{resource}/{id}', [$restApplication, 'callEditResource']],
-                ['PUT', '/{resource}/{id}', [$restApplication, 'callEditResource']],
-                ['HEAD', '/{resource}/{id}', [$restApplication, 'callResourceExists']],
-                ['DEL', '/{resource}/{id}', [$restApplication, 'calldDeleteResource']],
-                ['GET', '/{resource}/{id}/{child}', [$restApplication, 'callGetChildResources']],
-                ['POST', '/{resource}/{id}/{child}', [$restApplication, 'callCreateNewChildResource']],
-                ['PUT', '/{resource}/{id}/{child}', [$restApplication, 'callCreateNewChildResource']],
-                ['HEAD', '/{resource}/{id}/{child}', [$restApplication, 'callMethodNotAllowed']],
-                ['DEL', '/{resource}/{id}/{child}', [$restApplication, 'callMethodNotAllowed']]
-            );
-
-        $restApplication->expects(self::exactly(3))
+        $restApplication->expects(self::exactly(2))
             ->method('createNew')
             ->withConsecutive(
-                [CompositeContainer::class],
-                [Container::class],
-                [RouteCollection::class]
+                [self::equalTo(CompositeContainer::class)],
+                [self::equalTo(Container::class)]
             )
-            ->will(self::onConsecutiveCalls($compositeContainer, $container, $routeCollection));
+            ->will(self::onConsecutiveCalls($compositeContainer, $container));
+
+        $restApplication->expects(self::once())
+            ->method('createRouteCollection')
+            ->will(self::returnValue($routeCollection));
 
         $restApplication->expects(self::once())
             ->method('registerServices')
@@ -150,6 +176,105 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->will(self::returnValue($request));
 
         self::assertNull($restApplication->run());
+    }
+
+    /**
+     * @test
+     */
+    public function runServicesWithCustomeContainerSucceeds()
+    {
+        $requestMethod = 'GET';
+        $requestPath   = '/test';
+
+        $customContainer = $this->getMockBuilder(Container::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $request->expects(self::once())
+            ->method('getMethod')
+            ->will(self::returnValue($requestMethod));
+
+        $request->expects(self::once())
+            ->method('getPathInfo')
+            ->will(self::returnValue($requestPath));
+
+        $response = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $response->expects(self::once())
+            ->method('send');
+
+        $dispatcher = $this->getMockBuilder(Dispatcher::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $dispatcher->expects(self::once())
+            ->method('dispatch')
+            ->with(
+                self::equalTo($requestMethod),
+                self::equalTo($requestPath)
+            )
+            ->will(self::returnValue($response));
+
+        $container = $this->getMockBuilder(Container::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $compositeContainer = $this->getMockBuilder(CompositeContainer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $compositeContainer->expects(self::exactly(2))
+            ->method('addContainer')
+            ->withConsecutive(
+                [self::equalTo($customContainer)],
+                [self::equalTo($container)]
+            );
+
+        $routeCollection = $this->getMockBuilder(RouteCollection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $routeCollection->expects(self::once())
+            ->method('getDispatcher')
+            ->will(self::returnValue($dispatcher));
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['createNew', 'createRouteCollection', 'registerServices', 'setContainer', 'createRequest'])
+            ->getMock();
+
+        $restApplication->expects(self::exactly(2))
+            ->method('createNew')
+            ->withConsecutive(
+                [self::equalTo(CompositeContainer::class)],
+                [self::equalTo(Container::class)]
+            )
+            ->will(self::onConsecutiveCalls($compositeContainer, $container));
+
+        $restApplication->expects(self::once())
+            ->method('createRouteCollection')
+            ->will(self::returnValue($routeCollection));
+
+        $restApplication->expects(self::once())
+            ->method('registerServices')
+            ->with(self::equalTo($container))
+            ->will(self::returnValue($container));
+
+        $restApplication->expects(self::once())
+            ->method('setContainer')
+            ->with(self::equalTo($compositeContainer));
+
+        $restApplication->expects(self::once())
+            ->method('createRequest')
+            ->will(self::returnValue($request));
+
+        self::assertNull($restApplication->run($customContainer));
     }
 
     /**
@@ -176,5 +301,39 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->will(self::returnValue($controller));
 
         self::assertSame($controller, $restApplication->getController('test'));
+    }
+
+    /**
+     * @test
+     * @expectedException Mooti\Xizlr\Core\Exception\ControllerNotFoundException
+     */
+    public function getControllerThrowsControllerNotFoundException()
+    {
+        $controllers = [];
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->setConstructorArgs([$controllers])
+            ->setMethods(null)
+            ->getMock();
+
+        $restApplication->getController('test');
+    }
+
+    /**
+     * @test
+     * @expectedException Mooti\Xizlr\Core\Exception\InvalidControllerException
+     */
+    public function getControllerThrowsInvalidControllerException()
+    {
+        $controllers = [
+            'test' => '\\stdClass'
+        ];
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->setConstructorArgs([$controllers])
+            ->setMethods(null)
+            ->getMock();
+
+        $restApplication->getController('test');
     }
 }

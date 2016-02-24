@@ -1,16 +1,20 @@
 <?php
 /**
+ *
  * The main Application class
  *
- * @author Ken Lalobo
- *
+ * @package      Xizlr
+ * @subpackage   Core     
+ * @author       Ken Lalobo <ken@mooti.io>
  */
 
 namespace Mooti\Xizlr\Core;
 
-use Interop\Container\ContainerInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Mooti\Xizlr\Core\Exception\ControllerNotFoundException;
+use Mooti\Xizlr\Core\Exception\InvalidControllerException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+use Interop\Container\ContainerInterface;
 use League\Route\RouteCollection;
 use ICanBoogie\Inflector;
 
@@ -18,40 +22,37 @@ class RestApplication
 {
     use Xizlr;
 
+    /**
+     * @var array
+     */
     private $controllers;
 
+    /**
+     * @param array  $identifier  Key/value list of controllers.
+     */
     public function __construct(array $controllers)
     {
         $this->controllers = $controllers;
     }
 
+    /**
+     * Create a Symfony Request object
+     *
+     * @return Symfony\Component\HttpFoundation\Request 
+     */
     public function createRequest()
     {
         return Request::createFromGlobals();
     }
 
-    public function registerServices(\ArrayAccess $container)
+    /**
+     * Create a League RoutCollection object and add our routes to it
+     *
+     * @return League\Route\RouteCollection
+     */
+    public function createRouteCollection()
     {
-        $services = Services::getDefinitions();
-        foreach ($services as $id => $service) {
-            $container[$id] = $service;
-        }
-        return $container;
-    }
-
-    public function run(ContainerInterface $container = null)
-    {
-        $compositeContainer = $this->createNew(CompositeContainer::class);
-        if (isset($container) == true) {
-            $compositeContainer->addContainer($container);
-        }
-
-        $xizlrContainer = $this->registerServices($this->createNew(Container::class));
-        $compositeContainer->addContainer($xizlrContainer);
-
-        $this->setContainer($compositeContainer);
-
-        $routeCollection = $this->createNew(RouteCollection::class);
+        $routeCollection  = $this->createNew(RouteCollection::class);
 
         $routeCollection->addRoute('GET', '/{resource}', [$this, 'callGetResources']);
         $routeCollection->addRoute('POST', '/{resource}', [$this, 'callCreateNewResource']);
@@ -71,6 +72,44 @@ class RestApplication
         $routeCollection->addRoute('HEAD', '/{resource}/{id}/{child}', [$this, 'callMethodNotAllowed']);
         $routeCollection->addRoute('DEL', '/{resource}/{id}/{child}', [$this, 'callMethodNotAllowed']);
 
+        return $routeCollection;
+    }
+
+    /**
+     * Add services that we need to a given container
+     *
+     * @param \ArrayAccess $container An object that implements ArrayAccess
+     *
+     * @return \ArrayAccess
+     */
+    public function registerServices(\ArrayAccess $container)
+    {
+        $services = Services::getDefinitions();
+        foreach ($services as $id => $service) {
+            $container[$id] = $service;
+        }
+        return $container;
+    }
+
+    /**
+     * Run the application
+     *
+     * @param Interop\Container\ContainerInterface $container An object that implements ContainerInterface
+     */
+    public function run(ContainerInterface $container = null)
+    {
+        $compositeContainer = $this->createNew(CompositeContainer::class);
+        if (isset($container) == true) {
+            $compositeContainer->addContainer($container);
+        }
+
+        $xizlrContainer = $this->registerServices($this->createNew(Container::class));
+        $compositeContainer->addContainer($xizlrContainer);
+
+        $this->setContainer($compositeContainer);
+
+        $routeCollection = $this->createRouteCollection();
+
         $dispatcher = $routeCollection->getDispatcher();
 
         $request = $this->createRequest();
@@ -80,10 +119,18 @@ class RestApplication
         $response->send();
     }
 
+    /**
+     * Add services that we need to a given container
+     *
+     * @param string $resource The name of the resource being access (e.g 'users' if we are accessing http://account.mooti.io/users)
+     *
+     * @return \ArrayAccess
+     */
     public function getController($resource)
     {
+   
         if (isset($this->controllers[$resource]) == false) {
-            throw new ControllerNotFoundException('the controller '.$this->controllers[$resource].' does not exist');
+            throw new ControllerNotFoundException('the controller for "'.$resource.'" does not exist');
         }
 
         $controller = $this->createNew($this->controllers[$resource]);
