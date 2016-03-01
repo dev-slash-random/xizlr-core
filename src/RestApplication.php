@@ -120,31 +120,37 @@ class RestApplication
     }
 
     /**
-     * Add services that we need to a given container
+     * Create a new controller given a resource name
      *
-     * @param string $resource The name of the resource being access (e.g 'users' if we are accessing http://account.mooti.io/users)
+     * @param string $resourceName The name of the resource being created (e.g 'users' if we are accessing http://account.mooti.io/users)
      *
-     * @return \ArrayAccess
+     * @return Mooti\Xizlr\Core\BaseController
      */
-    public function getController($resource)
+    public function createController($resourceName)
     {
-   
-        if (isset($this->controllers[$resource]) == false) {
-            throw new ControllerNotFoundException('the controller for "'.$resource.'" does not exist');
+        if (isset($this->controllers[$resourceName]) == false) {
+            throw new ControllerNotFoundException('the controller for "'.$resourceName.'" does not exist');
         }
 
-        $controller = $this->createNew($this->controllers[$resource]);
+        $controller = $this->createNew($this->controllers[$resourceName]);
 
         if (!$controller instanceof BaseController) {
-            throw new InvalidControllerException('the controller '.$this->controllers[$resource].' is not an instance of AbstractController');
+            throw new InvalidControllerException('the controller '.$this->controllers[$resourceName].' is not an instance of AbstractController');
         }
 
         return $controller;
     }
 
+    /**
+     * Call a method on a resource
+     *
+     * @param string $resourceName The name of the resource
+     *
+     * @return mixed
+     */
     public function callMethod($resourceName, $methodName, $arguments = [])
     {
-        $controller = $this->getController($resourceName);
+        $controller = $this->createController($resourceName);
 
         if (method_exists($controller, $methodName) == false) {
             throw new InvalidMethodException('The method ('.$methodName.') does not exist for the class '.get_class($controller));

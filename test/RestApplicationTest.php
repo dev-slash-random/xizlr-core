@@ -280,7 +280,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function getControllerSucceeds()
+    public function createControllerSucceeds()
     {
         $controllers = [
             'test' => BaseController::class
@@ -300,14 +300,14 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->with(self::equalTo(BaseController::class))
             ->will(self::returnValue($controller));
 
-        self::assertSame($controller, $restApplication->getController('test'));
+        self::assertSame($controller, $restApplication->createController('test'));
     }
 
     /**
      * @test
      * @expectedException Mooti\Xizlr\Core\Exception\ControllerNotFoundException
      */
-    public function getControllerThrowsControllerNotFoundException()
+    public function createControllerThrowsControllerNotFoundException()
     {
         $controllers = [];
 
@@ -316,14 +316,14 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->setMethods(null)
             ->getMock();
 
-        $restApplication->getController('test');
+        $restApplication->createController('test');
     }
 
     /**
      * @test
      * @expectedException Mooti\Xizlr\Core\Exception\InvalidControllerException
      */
-    public function getControllerThrowsInvalidControllerException()
+    public function createControllerThrowsInvalidControllerException()
     {
         $controllers = [
             'test' => '\\stdClass'
@@ -334,6 +334,6 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->setMethods(null)
             ->getMock();
 
-        $restApplication->getController('test');
+        $restApplication->createController('test');
     }
 }
