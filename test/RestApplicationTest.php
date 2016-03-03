@@ -3,15 +3,19 @@ namespace Mooti\Test\Xizlr\Core;
 
 require dirname(__FILE__).'/../vendor/autoload.php';
 
-use Mooti\Xizlr\Core\RestApplication;
-use Mooti\Xizlr\Core\Container;
+use Mooti\Xizlr\Core\Exception\MethodNotAllowedException;
+use Mooti\Test\Xizlr\Core\Fixture\TestClassWithMethod;
 use Mooti\Xizlr\Core\CompositeContainer;
+use Mooti\Xizlr\Core\RestApplication;
+use Mooti\Xizlr\Core\BaseController;
+use Mooti\Xizlr\Core\Container;
+use Mooti\Xizlr\Core\Services;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Interop\Container\ContainerInterface;
 use League\Route\RouteCollection;
 use League\Route\Dispatcher;
-use Mooti\Xizlr\Core\BaseController;
+use ICanBoogie\Inflector;
 
 class RestApplicationTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,21 +50,21 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
         $routeCollection->expects(self::exactly(15))
             ->method('addRoute')
             ->withConsecutive(
-                ['GET', '/{resource}', [$restApplication, 'callGetResources']],
-                ['POST', '/{resource}', [$restApplication, 'callCreateNewResource']],
-                ['PUT', '/{resource}', [$restApplication, 'callCreateNewResource']],
-                ['HEAD', '/{resource}', [$restApplication, 'callMethodNotAllowed']],
-                ['DEL', '/{resource}', [$restApplication, 'callMethodNotAllowed']],
-                ['GET', '/{resource}/{id}', [$restApplication, 'callGetResource']],
-                ['POST', '/{resource}/{id}', [$restApplication, 'callEditResource']],
-                ['PUT', '/{resource}/{id}', [$restApplication, 'callEditResource']],
-                ['HEAD', '/{resource}/{id}', [$restApplication, 'callResourceExists']],
-                ['DEL', '/{resource}/{id}', [$restApplication, 'calldDeleteResource']],
-                ['GET', '/{resource}/{id}/{child}', [$restApplication, 'callGetChildResources']],
-                ['POST', '/{resource}/{id}/{child}', [$restApplication, 'callCreateNewChildResource']],
-                ['PUT', '/{resource}/{id}/{child}', [$restApplication, 'callCreateNewChildResource']],
-                ['HEAD', '/{resource}/{id}/{child}', [$restApplication, 'callMethodNotAllowed']],
-                ['DEL', '/{resource}/{id}/{child}', [$restApplication, 'callMethodNotAllowed']]
+                ['GET', '/{resourceNamePlural}', [$restApplication, 'callGetResources']],
+                ['POST', '/{resourceNamePlural}', [$restApplication, 'callCreateNewResource']],
+                ['PUT', '/{resourceNamePlural}', [$restApplication, 'callCreateNewResource']],
+                ['HEAD', '/{resourceNamePlural}', [$restApplication, 'callMethodNotAllowed']],
+                ['DEL', '/{resourceNamePlural}', [$restApplication, 'callMethodNotAllowed']],
+                ['GET', '/{resourceNamePlural}/{id}', [$restApplication, 'callGetResource']],
+                ['POST', '/{resourceNamePlural}/{id}', [$restApplication, 'callEditResource']],
+                ['PUT', '/{resourceNamePlural}/{id}', [$restApplication, 'callEditResource']],
+                ['HEAD', '/{resourceNamePlural}/{id}', [$restApplication, 'callResourceExists']],
+                ['DEL', '/{resourceNamePlural}/{id}', [$restApplication, 'calldDeleteResource']],
+                ['GET', '/{resourceNamePlural}/{id}/{childNamePlural}', [$restApplication, 'callGetChildResources']],
+                ['POST', '/{resourceNamePlural}/{id}/{childNamePlural}', [$restApplication, 'callCreateNewChildResource']],
+                ['PUT', '/{resourceNamePlural}/{id}/{childNamePlural}', [$restApplication, 'callCreateNewChildResource']],
+                ['HEAD', '/{resourceNamePlural}/{id}/{childNamePlural}', [$restApplication, 'callMethodNotAllowed']],
+                ['DEL', '/{resourceNamePlural}/{id}/{childNamePlural}', [$restApplication, 'callMethodNotAllowed']]
             );
 
         $restApplication->expects(self::once())
@@ -335,5 +339,528 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $restApplication->createController('test');
+    }
+
+    /**
+     * @test
+     */
+    public function callMethodSucceeds()
+    {
+        $resourceName = 'test';
+        $methodName   = 'foo';
+        $argument     = 'bar';
+        $return       = 'bar';
+
+        $controller =  new TestClassWithMethod;
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['createController'])
+            ->getMock();
+
+        $restApplication->expects(self::once())
+            ->method('createController')
+            ->with(self::equalTo($resourceName))
+            ->will(self::returnValue($controller));
+
+        self::assertSame($return, $restApplication->callMethod($resourceName, $methodName, [$argument]));
+    }
+
+    /**
+     * @test
+     * @expectedException Mooti\Xizlr\Core\Exception\InvalidMethodException
+     */
+    public function callMethodThrowsInvalidMethodException()
+    {
+        $resourceName = 'test';
+        $methodName   = 'foo';
+
+        $controller =  $controller =  $this->getMockBuilder('\\stdClass')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['createController'])
+            ->getMock();
+
+        $restApplication->expects(self::once())
+            ->method('createController')
+            ->with(self::equalTo($resourceName))
+            ->will(self::returnValue($controller));
+
+        $restApplication->callMethod($resourceName, $methodName, []);
+    }
+
+    /**
+     * @test
+     */
+    public function callGetResourcesSucceeds()
+    {
+        $resourceNamePlural = 'tests';
+        $resourceNameCamel  = 'Tests';
+        $methodName         = 'getTests';
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $response = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inflector = $this->getMockBuilder(Inflector::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inflector->expects(self::once())
+            ->method('camelize')
+            ->with(self::equalTo($resourceNamePlural))
+            ->will(self::returnValue($resourceNameCamel));
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['callMethod', 'getService'])
+            ->getMock();
+
+        $restApplication->expects(self::once())
+            ->method('getService')
+            ->with(self::equalTo(Services::INFLECTOR))
+            ->will(self::returnValue($inflector));
+
+        $restApplication->expects(self::once())
+            ->method('callMethod')
+            ->with(
+                self::equalTo($resourceNamePlural),
+                self::equalTo($methodName),
+                self::equalTo([$request, $response])
+            )
+            ->will(self::returnValue('foobar'));
+
+        self::assertSame('foobar', $restApplication->callGetResources($request, $response, ['resourceNamePlural' => $resourceNamePlural]));
+    }
+
+    /**
+     * @test
+     */
+    public function callCreateNewResourceSucceeds()
+    {
+        $resourceNamePlural       = 'tests';
+        $resourceNameSingle       = 'test';
+        $resourceNameSingleCamel  = 'Test';
+        $methodName               = 'createTest';
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $response = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inflector = $this->getMockBuilder(Inflector::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inflector->expects(self::once())
+            ->method('singularize')
+            ->with(self::equalTo($resourceNamePlural))
+            ->will(self::returnValue($resourceNameSingle));
+
+        $inflector->expects(self::once())
+            ->method('camelize')
+            ->with(self::equalTo($resourceNameSingle))
+            ->will(self::returnValue($resourceNameSingleCamel));
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['callMethod', 'getService'])
+            ->getMock();
+
+        $restApplication->expects(self::once())
+            ->method('getService')
+            ->with(self::equalTo(Services::INFLECTOR))
+            ->will(self::returnValue($inflector));
+
+        $restApplication->expects(self::once())
+            ->method('callMethod')
+            ->with(
+                self::equalTo($resourceNamePlural),
+                self::equalTo($methodName),
+                self::equalTo([$request, $response])
+            )
+            ->will(self::returnValue('foobar'));
+
+        self::assertSame('foobar', $restApplication->callCreateNewResource($request, $response, ['resourceNamePlural' => $resourceNamePlural]));
+    }
+
+    /**
+     * @test
+     */
+    public function callGetResourceSucceeds()
+    {
+        $resourceNamePlural       = 'tests';
+        $resourceNameSingle       = 'test';
+        $resourceNameSingleCamel  = 'Test';
+        $methodName               = 'getTest';
+        $resourceId               = 123;
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $response = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inflector = $this->getMockBuilder(Inflector::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inflector->expects(self::once())
+            ->method('singularize')
+            ->with(self::equalTo($resourceNamePlural))
+            ->will(self::returnValue($resourceNameSingle));
+
+        $inflector->expects(self::once())
+            ->method('camelize')
+            ->with(self::equalTo($resourceNameSingle))
+            ->will(self::returnValue($resourceNameSingleCamel));
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['callMethod', 'getService'])
+            ->getMock();
+
+        $restApplication->expects(self::once())
+            ->method('getService')
+            ->with(self::equalTo(Services::INFLECTOR))
+            ->will(self::returnValue($inflector));
+
+        $restApplication->expects(self::once())
+            ->method('callMethod')
+            ->with(
+                self::equalTo($resourceNamePlural),
+                self::equalTo($methodName),
+                self::equalTo([$resourceId, $request, $response])
+            )
+            ->will(self::returnValue('foobar'));
+
+        self::assertSame('foobar', $restApplication->callGetResource($request, $response, ['resourceNamePlural' => $resourceNamePlural, 'id' => $resourceId]));
+    }
+
+    /**
+     * @test
+     */
+    public function callEditResourceSucceeds()
+    {
+        $resourceNamePlural       = 'tests';
+        $resourceNameSingle       = 'test';
+        $resourceNameSingleCamel  = 'Test';
+        $methodName               = 'editTest';
+        $resourceId               = 123;
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $response = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inflector = $this->getMockBuilder(Inflector::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inflector->expects(self::once())
+            ->method('singularize')
+            ->with(self::equalTo($resourceNamePlural))
+            ->will(self::returnValue($resourceNameSingle));
+
+        $inflector->expects(self::once())
+            ->method('camelize')
+            ->with(self::equalTo($resourceNameSingle))
+            ->will(self::returnValue($resourceNameSingleCamel));
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['callMethod', 'getService'])
+            ->getMock();
+
+        $restApplication->expects(self::once())
+            ->method('getService')
+            ->with(self::equalTo(Services::INFLECTOR))
+            ->will(self::returnValue($inflector));
+
+        $restApplication->expects(self::once())
+            ->method('callMethod')
+            ->with(
+                self::equalTo($resourceNamePlural),
+                self::equalTo($methodName),
+                self::equalTo([$resourceId, $request, $response])
+            )
+            ->will(self::returnValue('foobar'));
+
+        self::assertSame('foobar', $restApplication->callEditResource($request, $response, ['resourceNamePlural' => $resourceNamePlural, 'id' => $resourceId]));
+    }
+
+    /**
+     * @test
+     */
+    public function callResourceExistsSucceeds()
+    {
+        $resourceNamePlural       = 'testFoos';
+        $resourceNameSingle       = 'testFoo';
+        $resourceNameSingleCamel  = 'testFoo';
+        $methodName               = 'testFooExists';
+        $resourceId               = 123;
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $response = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inflector = $this->getMockBuilder(Inflector::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inflector->expects(self::once())
+            ->method('singularize')
+            ->with(self::equalTo($resourceNamePlural))
+            ->will(self::returnValue($resourceNameSingle));
+
+        $inflector->expects(self::once())
+            ->method('camelize')
+            ->with(self::equalTo($resourceNameSingle))
+            ->will(self::returnValue($resourceNameSingleCamel));
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['callMethod', 'getService'])
+            ->getMock();
+
+        $restApplication->expects(self::once())
+            ->method('getService')
+            ->with(self::equalTo(Services::INFLECTOR))
+            ->will(self::returnValue($inflector));
+
+        $restApplication->expects(self::once())
+            ->method('callMethod')
+            ->with(
+                self::equalTo($resourceNamePlural),
+                self::equalTo($methodName),
+                self::equalTo([$resourceId, $request, $response])
+            )
+            ->will(self::returnValue('foobar'));
+
+        self::assertSame('foobar', $restApplication->callResourceExists($request, $response, ['resourceNamePlural' => $resourceNamePlural, 'id' => $resourceId]));
+    }
+
+    /**
+     * @test
+     */
+    public function calldDeleteResourceSucceeds()
+    {
+        $resourceNamePlural       = 'tests';
+        $resourceNameSingle       = 'test';
+        $resourceNameSingleCamel  = 'Test';
+        $methodName               = 'deleteTest';
+        $resourceId               = 123;
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $response = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inflector = $this->getMockBuilder(Inflector::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inflector->expects(self::once())
+            ->method('singularize')
+            ->with(self::equalTo($resourceNamePlural))
+            ->will(self::returnValue($resourceNameSingle));
+
+        $inflector->expects(self::once())
+            ->method('camelize')
+            ->with(self::equalTo($resourceNameSingle))
+            ->will(self::returnValue($resourceNameSingleCamel));
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['callMethod', 'getService'])
+            ->getMock();
+
+        $restApplication->expects(self::once())
+            ->method('getService')
+            ->with(self::equalTo(Services::INFLECTOR))
+            ->will(self::returnValue($inflector));
+
+        $restApplication->expects(self::once())
+            ->method('callMethod')
+            ->with(
+                self::equalTo($resourceNamePlural),
+                self::equalTo($methodName),
+                self::equalTo([$resourceId, $request, $response])
+            )
+            ->will(self::returnValue('foobar'));
+
+        self::assertSame('foobar', $restApplication->calldDeleteResource($request, $response, ['resourceNamePlural' => $resourceNamePlural, 'id' => $resourceId]));
+    }
+
+    /**
+     * @test
+     */
+    public function callGetChildResourcesSucceeds()
+    {
+        $resourceNamePlural      = 'tests';
+        $resourceId              = 123;
+        $childNamePlural         = 'foos';
+        $resourceNameSingle      = 'test';
+        $resourceNameSingleCamel = 'Test';
+        $childNameCamel          = 'Foos';
+        $methodName              = 'getTestFoos';
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $response = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inflector = $this->getMockBuilder(Inflector::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inflector->expects(self::once())
+            ->method('singularize')
+            ->with(self::equalTo($resourceNamePlural))
+            ->will(self::returnValue($resourceNameSingle));
+
+        $inflector->expects(self::exactly(2))
+            ->method('camelize')
+            ->withConsecutive(
+                [self::equalTo($resourceNameSingle)],
+                [self::equalTo($childNamePlural)]
+            )
+            ->will(
+                self::onConsecutiveCalls($resourceNameSingleCamel, $childNameCamel)
+            );
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['callMethod', 'getService'])
+            ->getMock();
+
+        $restApplication->expects(self::once())
+            ->method('getService')
+            ->with(self::equalTo(Services::INFLECTOR))
+            ->will(self::returnValue($inflector));
+
+        $restApplication->expects(self::once())
+            ->method('callMethod')
+            ->with(
+                self::equalTo($resourceNamePlural),
+                self::equalTo($methodName),
+                self::equalTo([$request, $response])
+            )
+            ->will(self::returnValue('foobar'));
+
+        self::assertSame('foobar', $restApplication->callGetChildResources($request, $response, ['resourceNamePlural' => $resourceNamePlural, 'id' => $resourceId, 'childNamePlural' => $childNamePlural]));
+    }
+
+    /**
+     * @test
+     */
+    public function callCreateNewChildResourceSucceeds()
+    {
+        $resourceNamePlural      = 'tests';
+        $resourceId              = 123;
+        $resourceNameSingle      = 'test';
+        $resourceNameSingleCamel = 'Test';
+        $childNamePlural         = 'foos';
+        $childNameSingle         = 'foo';
+        $childNameSingleCamel    = 'Foo';
+        $methodName              = 'createTestFoo';
+
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $response = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inflector = $this->getMockBuilder(Inflector::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $inflector->expects(self::exactly(2))
+            ->method('singularize')
+            ->withConsecutive(
+                [self::equalTo($resourceNamePlural)],
+                [self::equalTo($childNamePlural)]
+            )
+            ->will(self::onConsecutiveCalls($resourceNameSingle, $childNameSingle));
+
+        $inflector->expects(self::exactly(2))
+            ->method('camelize')
+            ->withConsecutive(
+                [self::equalTo($resourceNameSingle)],
+                [self::equalTo($childNameSingle)]
+            )
+            ->will(
+                self::onConsecutiveCalls($resourceNameSingleCamel, $childNameSingleCamel)
+            );
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['callMethod', 'getService'])
+            ->getMock();
+
+        $restApplication->expects(self::once())
+            ->method('getService')
+            ->with(self::equalTo(Services::INFLECTOR))
+            ->will(self::returnValue($inflector));
+
+        $restApplication->expects(self::once())
+            ->method('callMethod')
+            ->with(
+                self::equalTo($resourceNamePlural),
+                self::equalTo($methodName),
+                self::equalTo([$request, $response])
+            )
+            ->will(self::returnValue('foobar'));
+
+        self::assertSame('foobar', $restApplication->callCreateNewChildResource($request, $response, ['resourceNamePlural' => $resourceNamePlural, 'id' => $resourceId, 'childNamePlural' => $childNamePlural]));
+    }
+
+    /**
+     * @test
+     * @expectedException Mooti\Xizlr\Core\Exception\MethodNotAllowedException
+     */
+    public function callMethodNotAllowedThrowsMethodNotAllowedException()
+    {
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $response = $this->getMockBuilder(Response::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $restApplication->callMethodNotAllowed($request, $response, []);
     }
 }

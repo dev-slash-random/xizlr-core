@@ -5,8 +5,8 @@ require dirname(__FILE__).'/../vendor/autoload.php';
 
 use Mooti\Xizlr\Core\Xizlr;
 use Interop\Container\ContainerInterface;
-use Mooti\Test\Xizlr\Core\TestClassNoXizlr;
-use Mooti\Test\Xizlr\Core\TestClassWithXizlr;
+use Mooti\Test\Xizlr\Core\Fixture\TestClassNoXizlr;
+use Mooti\Test\Xizlr\Core\Fixture\TestClassWithXizlr;
 
 class XizlrTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,6 +23,26 @@ class XizlrTest extends \PHPUnit_Framework_TestCase
         $xizlr->setContainer($container);
         
         self::assertSame($container, $xizlr->getContainer());
+    }
+
+    /**
+     * @test
+     */
+    public function getSucceeds()
+    {
+        $xizlr     = $this->getMockForTrait(Xizlr::class);
+        $container = $this->getMockBuilder(ContainerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $container->expects(self::once())
+            ->method('get')
+            ->with(self::equalTo('foo'))
+            ->will(self::returnValue('bar'));
+
+        $xizlr->setContainer($container);
+        
+        self::assertSame('bar', $xizlr->get('foo'));
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Mooti\Test\Xizlr\Core;
+namespace Mooti\Test\Xizlr\Core\Fixture;
 
 use Mooti\Xizlr\Core\Xizlr;
 
