@@ -172,7 +172,7 @@ class RestApplication
     public function callGetResources(Request $request, Response $response, array $args)
     {
         $resourceNamePlural = $args['resourceNamePlural'];
-        $inflector          = $this->getService(Services::INFLECTOR);
+        $inflector          = $this->get(Services::INFLECTOR);
         $methodName         = 'get'.$inflector->camelize($resourceNamePlural);
 
         return $this->callMethod($resourceNamePlural, $methodName, [$request, $response]);
@@ -190,7 +190,7 @@ class RestApplication
     public function callCreateNewResource(Request $request, Response $response, array $args)
     {
         $resourceNamePlural = $args['resourceNamePlural'];
-        $inflector          = $this->getService(Services::INFLECTOR);
+        $inflector          = $this->get(Services::INFLECTOR);
         $methodName         = 'create'.$inflector->camelize($inflector->singularize($resourceNamePlural));
 
         return $this->callMethod($resourceNamePlural, $methodName, [$request, $response]);
@@ -209,7 +209,7 @@ class RestApplication
     {
         $resourceNamePlural = $args['resourceNamePlural'];
         $resourceId         = $args['id'];
-        $inflector          = $this->getService(Services::INFLECTOR);
+        $inflector          = $this->get(Services::INFLECTOR);
         $methodName         = 'get'.$inflector->camelize($inflector->singularize($resourceNamePlural));
 
         return $this->callMethod($resourceNamePlural, $methodName, [$resourceId, $request, $response]);
@@ -228,7 +228,7 @@ class RestApplication
     {
         $resourceNamePlural = $args['resourceNamePlural'];
         $resourceId         = $args['id'];
-        $inflector          = $this->getService(Services::INFLECTOR);
+        $inflector          = $this->get(Services::INFLECTOR);
         $methodName         = 'edit'.$inflector->camelize($inflector->singularize($resourceNamePlural));
 
         return $this->callMethod($resourceNamePlural, $methodName, [$resourceId, $request, $response]);
@@ -247,7 +247,7 @@ class RestApplication
     {
         $resourceNamePlural = $args['resourceNamePlural'];
         $resourceId         = $args['id'];
-        $inflector          = $this->getService(Services::INFLECTOR);
+        $inflector          = $this->get(Services::INFLECTOR);
         $methodName         = $inflector->camelize($inflector->singularize($resourceNamePlural), Inflector::DOWNCASE_FIRST_LETTER).'Exists';
 
         return $this->callMethod($resourceNamePlural, $methodName, [$resourceId, $request, $response]);
@@ -266,7 +266,7 @@ class RestApplication
     {
         $resourceNamePlural = $args['resourceNamePlural'];
         $resourceId         = $args['id'];
-        $inflector          = $this->getService(Services::INFLECTOR);
+        $inflector          = $this->get(Services::INFLECTOR);
         $methodName         = 'delete'.$inflector->camelize($inflector->singularize($resourceNamePlural));
 
         return $this->callMethod($resourceNamePlural, $methodName, [$resourceId, $request, $response]);
@@ -286,7 +286,7 @@ class RestApplication
         $resourceNamePlural = $args['resourceNamePlural'];
         $resourceId         = $args['id'];
         $childResourceName  = $args['childNamePlural'];
-        $inflector          = $this->getService(Services::INFLECTOR);
+        $inflector          = $this->get(Services::INFLECTOR);
 
         $methodName = 'get'.$inflector->camelize($inflector->singularize($resourceNamePlural)).$inflector->camelize($childResourceName);
 
@@ -307,7 +307,7 @@ class RestApplication
         $resourceName      = $args['resourceNamePlural'];
         $resourceId        = $args['id'];
         $childResourceName = $args['childNamePlural'];
-        $inflector         = $this->getService(Services::INFLECTOR);
+        $inflector         = $this->get(Services::INFLECTOR);
 
         $methodName = 'create'.$inflector->camelize($inflector->singularize($resourceName)).$inflector->camelize($inflector->singularize($childResourceName));
 

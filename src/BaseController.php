@@ -27,7 +27,7 @@ class BaseController
      */
     public function render($content, Response $response)
     {
-        $serializer = $this->getService(Services::SERIALIZER);
+        $serializer = $this->get(Services::SERIALIZER);
 
         $response->setStatusCode(Response::HTTP_OK);
         $response->headers->set('Content-Type', 'application/json');

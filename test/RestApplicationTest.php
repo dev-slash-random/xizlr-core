@@ -420,11 +420,11 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication = $this->getMockBuilder(RestApplication::class)
             ->disableOriginalConstructor()
-            ->setMethods(['callMethod', 'getService'])
+            ->setMethods(['callMethod', 'get'])
             ->getMock();
 
         $restApplication->expects(self::once())
-            ->method('getService')
+            ->method('get')
             ->with(self::equalTo(Services::INFLECTOR))
             ->will(self::returnValue($inflector));
 
@@ -474,11 +474,11 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication = $this->getMockBuilder(RestApplication::class)
             ->disableOriginalConstructor()
-            ->setMethods(['callMethod', 'getService'])
+            ->setMethods(['callMethod', 'get'])
             ->getMock();
 
         $restApplication->expects(self::once())
-            ->method('getService')
+            ->method('get')
             ->with(self::equalTo(Services::INFLECTOR))
             ->will(self::returnValue($inflector));
 
@@ -529,11 +529,11 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication = $this->getMockBuilder(RestApplication::class)
             ->disableOriginalConstructor()
-            ->setMethods(['callMethod', 'getService'])
+            ->setMethods(['callMethod', 'get'])
             ->getMock();
 
         $restApplication->expects(self::once())
-            ->method('getService')
+            ->method('get')
             ->with(self::equalTo(Services::INFLECTOR))
             ->will(self::returnValue($inflector));
 
@@ -584,11 +584,11 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication = $this->getMockBuilder(RestApplication::class)
             ->disableOriginalConstructor()
-            ->setMethods(['callMethod', 'getService'])
+            ->setMethods(['callMethod', 'get'])
             ->getMock();
 
         $restApplication->expects(self::once())
-            ->method('getService')
+            ->method('get')
             ->with(self::equalTo(Services::INFLECTOR))
             ->will(self::returnValue($inflector));
 
@@ -639,11 +639,11 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication = $this->getMockBuilder(RestApplication::class)
             ->disableOriginalConstructor()
-            ->setMethods(['callMethod', 'getService'])
+            ->setMethods(['callMethod', 'get'])
             ->getMock();
 
         $restApplication->expects(self::once())
-            ->method('getService')
+            ->method('get')
             ->with(self::equalTo(Services::INFLECTOR))
             ->will(self::returnValue($inflector));
 
@@ -694,11 +694,11 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication = $this->getMockBuilder(RestApplication::class)
             ->disableOriginalConstructor()
-            ->setMethods(['callMethod', 'getService'])
+            ->setMethods(['callMethod', 'get'])
             ->getMock();
 
         $restApplication->expects(self::once())
-            ->method('getService')
+            ->method('get')
             ->with(self::equalTo(Services::INFLECTOR))
             ->will(self::returnValue($inflector));
 
@@ -756,11 +756,11 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication = $this->getMockBuilder(RestApplication::class)
             ->disableOriginalConstructor()
-            ->setMethods(['callMethod', 'getService'])
+            ->setMethods(['callMethod', 'get'])
             ->getMock();
 
         $restApplication->expects(self::once())
-            ->method('getService')
+            ->method('get')
             ->with(self::equalTo(Services::INFLECTOR))
             ->will(self::returnValue($inflector));
 
@@ -822,11 +822,11 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication = $this->getMockBuilder(RestApplication::class)
             ->disableOriginalConstructor()
-            ->setMethods(['callMethod', 'getService'])
+            ->setMethods(['callMethod', 'get'])
             ->getMock();
 
         $restApplication->expects(self::once())
-            ->method('getService')
+            ->method('get')
             ->with(self::equalTo(Services::INFLECTOR))
             ->will(self::returnValue($inflector));
 

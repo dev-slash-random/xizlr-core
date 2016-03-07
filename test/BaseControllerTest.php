@@ -59,11 +59,11 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
 
         $abstractController = $this->getMockBuilder(BaseController::class)
             ->disableOriginalConstructor()
-            ->setMethods(array('getService'))
+            ->setMethods(array('get'))
             ->getMock();
 
         $abstractController->expects(self::once())
-            ->method('getService')
+            ->method('get')
             ->with('mooti.system.serializer')
             ->will(self::returnValue($serializer));
 
