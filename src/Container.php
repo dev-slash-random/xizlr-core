@@ -11,13 +11,26 @@
 
 namespace Mooti\Xizlr\Core;
 
-use Pimple\Container as PimpleContainer;
 use Interop\Container\ContainerInterface;
 
-use Mooti\Xizlr\Core\Exception\ContainerNotFoundException;
+use Mooti\Xizlr\Core\Exception\ItemNotFoundException;
 
-class Container extends PimpleContainer implements ContainerInterface
+class Container implements ContainerInterface
 {
+    private $items = array();
+
+    /**
+     * Sets an entry in the container by its identifier.
+     *
+     * @param string $id    Identifier of the entry to place.
+     * @param mixed  $value Entry to place
+     *
+     */
+    public function set($id, $value)
+    {
+        $this->items[$id] = $value;
+    }
+
     /**
      * Finds an entry of the container by its identifier and returns it.
      *
@@ -30,10 +43,29 @@ class Container extends PimpleContainer implements ContainerInterface
      */
     public function get($id)
     {
-        if ($this->offsetExists($id) == false) {
-            throw new ContainerNotFoundException('id '.$id.' was not found in the container');
+        if (isset($this->items[$id]) == false) {
+            throw new ItemNotFoundException('id '.$id.' was not found in the container');
         }
-        return $this->offsetGet($id);
+
+        $item = $this->items[$id];
+
+        if (is_callable($item) == false) {
+            return $item;
+        }
+        
+        $newItem = $item();
+        $this->items[$id] = $newItem;
+
+        if (gettype($newItem) != 'object') {
+            return $newItem;
+        }
+
+        $traits = class_uses($newItem);
+        if (isset($traits[Xizlr::class]) == true) {
+            $newItem->setContainer($this);
+        }
+
+        return $newItem;
     }
 
     /**
@@ -49,6 +81,22 @@ class Container extends PimpleContainer implements ContainerInterface
      */
     public function has($id)
     {
-        return $this->offsetExists($id);
+        return isset($this->items[$id]);
+    }
+
+    /**
+     * Add services to the container
+     *
+     * @param ServiceProviderInterface $serviceProvider A service provider
+     *
+     */
+    public function registerServices(ServiceProviderInterface $serviceProvider)
+    {
+        $services = $serviceProvider->getServices();      
+        foreach ($services as $id => $service) {
+            if ($this->has($id) == false) {
+                $this->set($id, $service);
+            }
+        }
     }
 }

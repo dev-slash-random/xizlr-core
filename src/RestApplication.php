@@ -78,46 +78,53 @@ class RestApplication
     }
 
     /**
-     * Add services that we need to a given container
+     * Bootstrap the application
      *
-     * @param \ArrayAccess $container An object that implements ArrayAccess
-     *
-     * @return \ArrayAccess
+     * @param ServiceProviderInterface $serviceProvider An option service provider
      */
-    public function registerServices(\ArrayAccess $container)
+    public function bootstrap(ServiceProviderInterface $serviceProvider = null)
     {
-        $services = Services::getDefinitions();
-        foreach ($services as $id => $service) {
-            $container[$id] = $service;
-        }
-        return $container;
+        $container = $this->createNew(Container::class);
+
+        $xizlrServiceProvider = $this->createNew(ServiceProvider::class);
+
+        $container->registerServices($serviceProvider);
+        $container->registerServices($xizlrServiceProvider);
+
+        $this->setContainer($container);
     }
 
     /**
      * Run the application
      *
-     * @param Interop\Container\ContainerInterface $container An object that implements ContainerInterface
      */
-    public function run(ContainerInterface $container = null)
+    public function registerModules($modules = [])
     {
-        $compositeContainer = $this->createNew(CompositeContainer::class);
-        if (isset($container) == true) {
-            $compositeContainer->addContainer($container);
+        for($i = 0; $i < sizeof($modules); $i++) {
+            if (!$module instanceof ModuleInterface) {
+                throw new InvalidMethodException('The module at psoition '.($i+1).' is invalid');
+            }
+
+            $serviceProvider = $module->getServiceProvider();
+            $this->getContainer()->registerServices($serviceProvider);
+        }
+    }
+
+    /**
+     * Run the application
+     *
+     */
+    public function run()
+    {
+        if (empty($this->getContainer()) == true) {
+            throw new ContainerNotFoundException('The container cannot be found have you forgotten to bootstrap your application?');
         }
 
-        $xizlrContainer = $this->registerServices($this->createNew(Container::class));
-        $compositeContainer->addContainer($xizlrContainer);
-
-        $this->setContainer($compositeContainer);
-
         $routeCollection = $this->createRouteCollection();
-
         $dispatcher = $routeCollection->getDispatcher();
 
         $request = $this->createRequest();
-
         $response = $dispatcher->dispatch($request->getMethod(), $request->getPathInfo());
-
         $response->send();
     }
 
@@ -172,7 +179,7 @@ class RestApplication
     public function callGetResources(Request $request, Response $response, array $args)
     {
         $resourceNamePlural = $args['resourceNamePlural'];
-        $inflector          = $this->get(Services::INFLECTOR);
+        $inflector          = $this->get(ServiceProvider::INFLECTOR);
         $methodName         = 'get'.$inflector->camelize($resourceNamePlural);
 
         return $this->callMethod($resourceNamePlural, $methodName, [$request, $response]);
@@ -190,7 +197,7 @@ class RestApplication
     public function callCreateNewResource(Request $request, Response $response, array $args)
     {
         $resourceNamePlural = $args['resourceNamePlural'];
-        $inflector          = $this->get(Services::INFLECTOR);
+        $inflector          = $this->get(ServiceProvider::INFLECTOR);
         $methodName         = 'create'.$inflector->camelize($inflector->singularize($resourceNamePlural));
 
         return $this->callMethod($resourceNamePlural, $methodName, [$request, $response]);
@@ -209,7 +216,7 @@ class RestApplication
     {
         $resourceNamePlural = $args['resourceNamePlural'];
         $resourceId         = $args['id'];
-        $inflector          = $this->get(Services::INFLECTOR);
+        $inflector          = $this->get(ServiceProvider::INFLECTOR);
         $methodName         = 'get'.$inflector->camelize($inflector->singularize($resourceNamePlural));
 
         return $this->callMethod($resourceNamePlural, $methodName, [$resourceId, $request, $response]);
@@ -228,7 +235,7 @@ class RestApplication
     {
         $resourceNamePlural = $args['resourceNamePlural'];
         $resourceId         = $args['id'];
-        $inflector          = $this->get(Services::INFLECTOR);
+        $inflector          = $this->get(ServiceProvider::INFLECTOR);
         $methodName         = 'edit'.$inflector->camelize($inflector->singularize($resourceNamePlural));
 
         return $this->callMethod($resourceNamePlural, $methodName, [$resourceId, $request, $response]);
@@ -247,7 +254,7 @@ class RestApplication
     {
         $resourceNamePlural = $args['resourceNamePlural'];
         $resourceId         = $args['id'];
-        $inflector          = $this->get(Services::INFLECTOR);
+        $inflector          = $this->get(ServiceProvider::INFLECTOR);
         $methodName         = $inflector->camelize($inflector->singularize($resourceNamePlural), Inflector::DOWNCASE_FIRST_LETTER).'Exists';
 
         return $this->callMethod($resourceNamePlural, $methodName, [$resourceId, $request, $response]);
@@ -266,7 +273,7 @@ class RestApplication
     {
         $resourceNamePlural = $args['resourceNamePlural'];
         $resourceId         = $args['id'];
-        $inflector          = $this->get(Services::INFLECTOR);
+        $inflector          = $this->get(ServiceProvider::INFLECTOR);
         $methodName         = 'delete'.$inflector->camelize($inflector->singularize($resourceNamePlural));
 
         return $this->callMethod($resourceNamePlural, $methodName, [$resourceId, $request, $response]);
@@ -286,7 +293,7 @@ class RestApplication
         $resourceNamePlural = $args['resourceNamePlural'];
         $resourceId         = $args['id'];
         $childResourceName  = $args['childNamePlural'];
-        $inflector          = $this->get(Services::INFLECTOR);
+        $inflector          = $this->get(ServiceProvider::INFLECTOR);
 
         $methodName = 'get'.$inflector->camelize($inflector->singularize($resourceNamePlural)).$inflector->camelize($childResourceName);
 
@@ -307,7 +314,7 @@ class RestApplication
         $resourceName      = $args['resourceNamePlural'];
         $resourceId        = $args['id'];
         $childResourceName = $args['childNamePlural'];
-        $inflector         = $this->get(Services::INFLECTOR);
+        $inflector         = $this->get(ServiceProvider::INFLECTOR);
 
         $methodName = 'create'.$inflector->camelize($inflector->singularize($resourceName)).$inflector->camelize($inflector->singularize($childResourceName));
 

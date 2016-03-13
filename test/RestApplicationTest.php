@@ -7,9 +7,9 @@ use Mooti\Xizlr\Core\Exception\MethodNotAllowedException;
 use Mooti\Test\Xizlr\Core\Fixture\TestClassWithMethod;
 use Mooti\Xizlr\Core\CompositeContainer;
 use Mooti\Xizlr\Core\RestApplication;
+use Mooti\Xizlr\Core\ServiceProvider;
 use Mooti\Xizlr\Core\BaseController;
 use Mooti\Xizlr\Core\Container;
-use Mooti\Xizlr\Core\Services;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Interop\Container\ContainerInterface;
@@ -78,21 +78,6 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function registerServicesSucceeds()
-    {
-        $arrayObject = new \ArrayObject;
-        $restApplication = $this->getMockBuilder(RestApplication::class)
-            ->disableOriginalConstructor()
-            ->setMethods(null)
-            ->getMock();
-
-        self::assertSame($arrayObject, $restApplication->registerServices($arrayObject));
-        self::assertCount(2, $arrayObject);
-    }
-
-    /**
-     * @test
-     */
     public function runServicesSucceeds()
     {
         $requestMethod = 'GET';
@@ -132,15 +117,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
         $container = $this->getMockBuilder(Container::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $compositeContainer = $this->getMockBuilder(CompositeContainer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $compositeContainer->expects(self::once())
-            ->method('addContainer')
-            ->with(self::equalTo($container));
-
+        
         $routeCollection = $this->getMockBuilder(RouteCollection::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -149,136 +126,32 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->method('getDispatcher')
             ->will(self::returnValue($dispatcher));
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $container = $this->getMockBuilder(Container::class)
             ->disableOriginalConstructor()
-            ->setMethods(['createNew', 'createRouteCollection', 'registerServices', 'setContainer', 'createRequest'])
             ->getMock();
 
-        $restApplication->expects(self::exactly(2))
-            ->method('createNew')
-            ->withConsecutive(
-                [self::equalTo(CompositeContainer::class)],
-                [self::equalTo(Container::class)]
-            )
-            ->will(self::onConsecutiveCalls($compositeContainer, $container));
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['createRouteCollection', 'createRequest', 'getContainer'])
+            ->getMock();
+
+        $restApplication->expects(self::once())
+            ->method('getContainer')
+            ->will(self::returnValue($container));
 
         $restApplication->expects(self::once())
             ->method('createRouteCollection')
             ->will(self::returnValue($routeCollection));
 
         $restApplication->expects(self::once())
-            ->method('registerServices')
-            ->with(self::equalTo($container))
-            ->will(self::returnValue($container));
-
-        $restApplication->expects(self::once())
-            ->method('setContainer')
-            ->with(self::equalTo($compositeContainer));
+            ->method('createRouteCollection')
+            ->will(self::returnValue($routeCollection));
 
         $restApplication->expects(self::once())
             ->method('createRequest')
             ->will(self::returnValue($request));
 
         self::assertNull($restApplication->run());
-    }
-
-    /**
-     * @test
-     */
-    public function runServicesWithCustomeContainerSucceeds()
-    {
-        $requestMethod = 'GET';
-        $requestPath   = '/test';
-
-        $customContainer = $this->getMockBuilder(Container::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $request = $this->getMockBuilder(Request::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $request->expects(self::once())
-            ->method('getMethod')
-            ->will(self::returnValue($requestMethod));
-
-        $request->expects(self::once())
-            ->method('getPathInfo')
-            ->will(self::returnValue($requestPath));
-
-        $response = $this->getMockBuilder(Response::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $response->expects(self::once())
-            ->method('send');
-
-        $dispatcher = $this->getMockBuilder(Dispatcher::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $dispatcher->expects(self::once())
-            ->method('dispatch')
-            ->with(
-                self::equalTo($requestMethod),
-                self::equalTo($requestPath)
-            )
-            ->will(self::returnValue($response));
-
-        $container = $this->getMockBuilder(Container::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $compositeContainer = $this->getMockBuilder(CompositeContainer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $compositeContainer->expects(self::exactly(2))
-            ->method('addContainer')
-            ->withConsecutive(
-                [self::equalTo($customContainer)],
-                [self::equalTo($container)]
-            );
-
-        $routeCollection = $this->getMockBuilder(RouteCollection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $routeCollection->expects(self::once())
-            ->method('getDispatcher')
-            ->will(self::returnValue($dispatcher));
-
-        $restApplication = $this->getMockBuilder(RestApplication::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['createNew', 'createRouteCollection', 'registerServices', 'setContainer', 'createRequest'])
-            ->getMock();
-
-        $restApplication->expects(self::exactly(2))
-            ->method('createNew')
-            ->withConsecutive(
-                [self::equalTo(CompositeContainer::class)],
-                [self::equalTo(Container::class)]
-            )
-            ->will(self::onConsecutiveCalls($compositeContainer, $container));
-
-        $restApplication->expects(self::once())
-            ->method('createRouteCollection')
-            ->will(self::returnValue($routeCollection));
-
-        $restApplication->expects(self::once())
-            ->method('registerServices')
-            ->with(self::equalTo($container))
-            ->will(self::returnValue($container));
-
-        $restApplication->expects(self::once())
-            ->method('setContainer')
-            ->with(self::equalTo($compositeContainer));
-
-        $restApplication->expects(self::once())
-            ->method('createRequest')
-            ->will(self::returnValue($request));
-
-        self::assertNull($restApplication->run($customContainer));
     }
 
     /**
@@ -425,7 +298,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication->expects(self::once())
             ->method('get')
-            ->with(self::equalTo(Services::INFLECTOR))
+            ->with(self::equalTo(ServiceProvider::INFLECTOR))
             ->will(self::returnValue($inflector));
 
         $restApplication->expects(self::once())
@@ -479,7 +352,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication->expects(self::once())
             ->method('get')
-            ->with(self::equalTo(Services::INFLECTOR))
+            ->with(self::equalTo(ServiceProvider::INFLECTOR))
             ->will(self::returnValue($inflector));
 
         $restApplication->expects(self::once())
@@ -534,7 +407,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication->expects(self::once())
             ->method('get')
-            ->with(self::equalTo(Services::INFLECTOR))
+            ->with(self::equalTo(ServiceProvider::INFLECTOR))
             ->will(self::returnValue($inflector));
 
         $restApplication->expects(self::once())
@@ -589,7 +462,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication->expects(self::once())
             ->method('get')
-            ->with(self::equalTo(Services::INFLECTOR))
+            ->with(self::equalTo(ServiceProvider::INFLECTOR))
             ->will(self::returnValue($inflector));
 
         $restApplication->expects(self::once())
@@ -644,7 +517,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication->expects(self::once())
             ->method('get')
-            ->with(self::equalTo(Services::INFLECTOR))
+            ->with(self::equalTo(ServiceProvider::INFLECTOR))
             ->will(self::returnValue($inflector));
 
         $restApplication->expects(self::once())
@@ -699,7 +572,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication->expects(self::once())
             ->method('get')
-            ->with(self::equalTo(Services::INFLECTOR))
+            ->with(self::equalTo(ServiceProvider::INFLECTOR))
             ->will(self::returnValue($inflector));
 
         $restApplication->expects(self::once())
@@ -761,7 +634,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication->expects(self::once())
             ->method('get')
-            ->with(self::equalTo(Services::INFLECTOR))
+            ->with(self::equalTo(ServiceProvider::INFLECTOR))
             ->will(self::returnValue($inflector));
 
         $restApplication->expects(self::once())
@@ -827,7 +700,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication->expects(self::once())
             ->method('get')
-            ->with(self::equalTo(Services::INFLECTOR))
+            ->with(self::equalTo(ServiceProvider::INFLECTOR))
             ->will(self::returnValue($inflector));
 
         $restApplication->expects(self::once())

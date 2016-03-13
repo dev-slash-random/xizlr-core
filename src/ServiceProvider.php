@@ -5,12 +5,17 @@ namespace Mooti\Xizlr\Core;
 use JMS\Serializer\SerializerBuilder;
 use ICanBoogie\Inflector;
 
-class Services
+class ServiceProvider implements ServiceProviderInterface
 {
     const SERIALIZER = 'mooti.system.serializer';
     const INFLECTOR  = 'mooti.system.inflector';
 
-    public static function getDefinitions()
+    /**
+     * Get the details of the services we are providing     
+     *
+     * @return array
+     */
+    public function getServices()
     {
         return [
             self::SERIALIZER => function ($c) { return SerializerBuilder::create()->build();},
