@@ -11,9 +11,11 @@
 namespace Mooti\Xizlr\Core;
 
 use Mooti\Xizlr\Core\Exception\ControllerNotFoundException;
+use Mooti\Xizlr\Core\Exception\ContainerNotFoundException;
 use Mooti\Xizlr\Core\Exception\InvalidControllerException;
 use Mooti\Xizlr\Core\Exception\MethodNotAllowedException;
 use Mooti\Xizlr\Core\Exception\InvalidMethodException;
+use Mooti\Xizlr\Core\Exception\InvalidModuleException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Interop\Container\ContainerInterface;
@@ -88,21 +90,26 @@ class RestApplication
 
         $xizlrServiceProvider = $this->createNew(ServiceProvider::class);
 
-        $container->registerServices($serviceProvider);
+        if (isset($serviceProvider)) {
+            $container->registerServices($serviceProvider);    
+        }
+
         $container->registerServices($xizlrServiceProvider);
 
         $this->setContainer($container);
     }
 
     /**
-     * Run the application
+     * Register some modules
      *
      */
     public function registerModules($modules = [])
     {
         for($i = 0; $i < sizeof($modules); $i++) {
+            $module = $modules[$i];
+
             if (!$module instanceof ModuleInterface) {
-                throw new InvalidMethodException('The module at psoition '.($i+1).' is invalid');
+                throw new InvalidModuleException('The module at psoition '.($i+1).' is invalid');
             }
 
             $serviceProvider = $module->getServiceProvider();

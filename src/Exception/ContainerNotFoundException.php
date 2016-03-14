@@ -13,6 +13,6 @@ namespace Mooti\Xizlr\Core\Exception;
 
 use Interop\Container\Exception\NotFoundException;
 
-class ContainerNotFoundException extends \Exception implements NotFoundException
+class ContainerNotFoundException extends \Exception
 {
 }

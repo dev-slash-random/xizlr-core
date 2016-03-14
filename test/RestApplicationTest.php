@@ -6,6 +6,7 @@ require dirname(__FILE__).'/../vendor/autoload.php';
 use Mooti\Xizlr\Core\Exception\MethodNotAllowedException;
 use Mooti\Test\Xizlr\Core\Fixture\TestClassWithMethod;
 use Mooti\Xizlr\Core\CompositeContainer;
+use Mooti\Xizlr\Core\ModuleInterface;
 use Mooti\Xizlr\Core\RestApplication;
 use Mooti\Xizlr\Core\ServiceProvider;
 use Mooti\Xizlr\Core\BaseController;
@@ -78,7 +79,160 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function runServicesSucceeds()
+    public function bootstrapWithNoCustomServicePorviderSucceeds()
+    {
+        $xizlrServiceProvider = $this->getMockBuilder(ServiceProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $container = $this->getMockBuilder(Container::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $container->expects(self::once())
+            ->method('registerServices')
+            ->with(self::equalTo($xizlrServiceProvider));
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['createNew', 'setContainer'])
+            ->getMock();
+
+        $restApplication->expects(self::exactly(2))
+            ->method('createNew')
+            ->withConsecutive(
+                [self::equalTo(Container::class)],
+                [self::equalTo(ServiceProvider::class)]
+            )
+            ->will(self::onConsecutiveCalls($container, $xizlrServiceProvider));
+
+        $restApplication->expects(self::once())
+            ->method('setContainer')
+            ->with(self::equalTo($container));
+
+        $restApplication->bootstrap();
+    }
+
+    /**
+     * @test
+     */
+    public function bootstrapWithCustomServicePorviderSucceeds()
+    {
+        $serviceProvider = $this->getMockBuilder(ServiceProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $xizlrServiceProvider = $this->getMockBuilder(ServiceProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $container = $this->getMockBuilder(Container::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $container->expects(self::exactly(2))
+            ->method('registerServices')
+            ->withConsecutive(
+                [self::equalTo($serviceProvider)],
+                [self::equalTo($xizlrServiceProvider)]
+            );
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['createNew', 'setContainer'])
+            ->getMock();
+
+        $restApplication->expects(self::exactly(2))
+            ->method('createNew')
+            ->withConsecutive(
+                [self::equalTo(Container::class)],
+                [self::equalTo(ServiceProvider::class)]
+            )
+            ->will(self::onConsecutiveCalls($container, $xizlrServiceProvider));
+
+        $restApplication->expects(self::once())
+            ->method('setContainer')
+            ->with(self::equalTo($container));
+
+        $restApplication->bootstrap($serviceProvider);
+    }
+
+    /**
+     * @test
+     * @expectedException Mooti\Xizlr\Core\Exception\InvalidModuleException
+     */
+    public function registerModulesThrowsInvalidModuleException()
+    {
+        $modules = [new \stdClass];
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $restApplication->registerModules($modules);
+    }
+
+    /**
+     * @test     
+     */
+    public function registerModulesSucceeds()
+    {
+        $serviceProvider = $this->getMockBuilder(ServiceProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $module = $this->getMockBuilder(ModuleInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $module->expects(self::once())
+            ->method('getServiceProvider')
+            ->will(self::returnValue($serviceProvider));
+
+        $container = $this->getMockBuilder(Container::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $container->expects(self::once())
+            ->method('registerServices')
+            ->with(self::equalTo($serviceProvider));
+
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getContainer'])
+            ->getMock();
+
+        $restApplication->expects(self::once())
+            ->method('getContainer')
+            ->will(self::returnValue($container));
+
+        $restApplication->registerModules([$module]);
+    }
+
+
+    /**
+     * @test
+     * @expectedException Mooti\Xizlr\Core\Exception\ContainerNotFoundException
+     */
+    public function runThrowsConatinerNotFoundException()
+    {
+        $restApplication = $this->getMockBuilder(RestApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getContainer'])
+            ->getMock();
+
+        $restApplication->expects(self::once())
+            ->method('getContainer')
+            ->will(self::returnValue(null));
+
+        $restApplication->run();
+    }
+
+    /**
+     * @test
+     */
+    public function runSucceeds()
     {
         $requestMethod = 'GET';
         $requestPath   = '/test';
