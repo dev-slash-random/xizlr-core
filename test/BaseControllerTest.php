@@ -64,7 +64,7 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
 
         $abstractController->expects(self::once())
             ->method('get')
-            ->with('mooti.system.serializer')
+            ->with('xizlr.core.serializer')
             ->will(self::returnValue($serializer));
 
         self::assertSame($response, $abstractController->render($contentArray, $response));

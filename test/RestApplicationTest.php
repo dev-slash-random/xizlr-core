@@ -163,14 +163,19 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
      */
     public function registerModulesThrowsInvalidModuleException()
     {
-        $modules = [new \stdClass];
+        $moduleName = '\\TestModule';
 
         $restApplication = $this->getMockBuilder(RestApplication::class)
             ->disableOriginalConstructor()
-            ->setMethods(null)
+            ->setMethods(['createNew'])
             ->getMock();
 
-        $restApplication->registerModules($modules);
+        $restApplication->expects(self::once())
+            ->method('createNew')
+            ->with(self::equalTo($moduleName))
+            ->will(self::returnValue(new \stdClass));
+
+        $restApplication->registerModules([$moduleName]);
     }
 
     /**
@@ -178,6 +183,8 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
      */
     public function registerModulesSucceeds()
     {
+        $moduleName = '\\TestModule';
+
         $serviceProvider = $this->getMockBuilder(ServiceProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -200,14 +207,19 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $restApplication = $this->getMockBuilder(RestApplication::class)
             ->disableOriginalConstructor()
-            ->setMethods(['getContainer'])
+            ->setMethods(['getContainer', 'createNew'])
             ->getMock();
+
+        $restApplication->expects(self::once())
+            ->method('createNew')
+            ->with(self::equalTo($moduleName))
+            ->will(self::returnValue($module));
 
         $restApplication->expects(self::once())
             ->method('getContainer')
             ->will(self::returnValue($container));
 
-        $restApplication->registerModules([$module]);
+        $restApplication->registerModules([$moduleName]);
     }
 
 

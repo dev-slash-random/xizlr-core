@@ -88,12 +88,11 @@ class RestApplication
     {
         $container = $this->createNew(Container::class);
 
-        $xizlrServiceProvider = $this->createNew(ServiceProvider::class);
-
         if (isset($serviceProvider)) {
             $container->registerServices($serviceProvider);    
         }
 
+        $xizlrServiceProvider = $this->createNew(ServiceProvider::class);
         $container->registerServices($xizlrServiceProvider);
 
         $this->setContainer($container);
@@ -106,7 +105,9 @@ class RestApplication
     public function registerModules($modules = [])
     {
         for($i = 0; $i < sizeof($modules); $i++) {
-            $module = $modules[$i];
+            $moduleName = $modules[$i];
+
+            $module = $this->createNew($moduleName);
 
             if (!$module instanceof ModuleInterface) {
                 throw new InvalidModuleException('The module at psoition '.($i+1).' is invalid');
