@@ -18,8 +18,8 @@ class ServiceProvider implements ServiceProviderInterface
     public function getServices()
     {
         return [
-            self::SERIALIZER => function ($c) { return SerializerBuilder::create()->build();},
-            self::INFLECTOR  => function ($c) { return Inflector::get('en');}
+            self::SERIALIZER => function () { return SerializerBuilder::create()->build();},
+            self::INFLECTOR  => function () { return Inflector::get('en');}
         ];
     }
 }
