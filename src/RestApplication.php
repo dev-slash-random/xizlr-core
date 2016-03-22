@@ -110,7 +110,7 @@ class RestApplication
             $module = $this->createNew($moduleName);
 
             if (!$module instanceof ModuleInterface) {
-                throw new InvalidModuleException('The module at psoition '.($i+1).' is invalid');
+                throw new InvalidModuleException('The module at position '.($i+1).' is invalid');
             }
 
             $serviceProvider = $module->getServiceProvider();
@@ -125,7 +125,7 @@ class RestApplication
     public function run()
     {
         if (empty($this->getContainer()) == true) {
-            throw new ContainerNotFoundException('The container cannot be found have you forgotten to bootstrap your application?');
+            throw new ContainerNotFoundException('The container cannot be found. Have you forgotten to bootstrap your application?');
         }
 
         $routeCollection = $this->createRouteCollection();

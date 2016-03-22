@@ -6,18 +6,27 @@ require dirname(__FILE__).'/../vendor/autoload.php';
 use Mooti\Xizlr\Core\BaseController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use JMS\Serializer\Serializer;
+use JsonSerializable;
 
 class BaseControllerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
      */
-    public function renderWithArraySucceeds()
+    public function renderWithJsonSerializableSucceeds()
     {
         $contentArray = [
             'foo' => 'bar'
         ];
+
+        $model = $this->getMockBuilder(JsonSerializable::class)
+            ->disableOriginalConstructor()
+            ->setMethods(array('jsonSerialize'))
+            ->getMock();
+
+        $model->expects(self::once())
+            ->method('jsonSerialize')
+            ->will(self::returnValue($contentArray));
 
         $statusCode = 200;
 
@@ -48,25 +57,8 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
             ->method('setContent')
             ->with(self::equalTo($contentString));
 
-        $serializer = $this->getMockBuilder(Serializer::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $baseConttroller =  new BaseController;
 
-        $serializer->expects(self::once())
-            ->method('serialize')
-            ->with($contentArray)
-            ->will(self::returnValue($contentString));
-
-        $abstractController = $this->getMockBuilder(BaseController::class)
-            ->disableOriginalConstructor()
-            ->setMethods(array('get'))
-            ->getMock();
-
-        $abstractController->expects(self::once())
-            ->method('get')
-            ->with('xizlr.core.serializer')
-            ->will(self::returnValue($serializer));
-
-        self::assertSame($response, $abstractController->render($contentArray, $response));
+        self::assertSame($response, $baseConttroller->render($model, $response));
     }
 }

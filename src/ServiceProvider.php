@@ -4,11 +4,12 @@ namespace Mooti\Xizlr\Core;
 
 use JMS\Serializer\SerializerBuilder;
 use ICanBoogie\Inflector;
+use GUMP;
 
 class ServiceProvider implements ServiceProviderInterface
 {
-    const SERIALIZER = 'xizlr.core.serializer';
     const INFLECTOR  = 'xizlr.core.inflector';
+    const VALIDATOR  = 'xizlr.core.validator';
 
     /**
      * Get the details of the services we are providing     
@@ -18,8 +19,8 @@ class ServiceProvider implements ServiceProviderInterface
     public function getServices()
     {
         return [
-            self::SERIALIZER => function () { return SerializerBuilder::create()->build();},
-            self::INFLECTOR  => function () { return Inflector::get('en');}
+            self::INFLECTOR  => function () { return Inflector::get('en');},
+            self::VALIDATOR  => function () { return new GUMP();}
         ];
     }
 }

@@ -13,25 +13,25 @@ namespace Mooti\Xizlr\Core;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use JsonSerializable;
 
 class BaseController
 {
     use Xizlr;
 
     /**
-     * Renders any given content. It uses the current serializer to turn the data into json.
+     * Renders any given content as a json string
      *
-     * @param mixed content This can be serializable data type.
+     * @param JsonSerializable $content  This can be serializable data type.
+     * @param Response         $response The response object
      *
      * @return Response $response
      */
-    public function render($content, Response $response)
+    public function render(JsonSerializable $content, Response $response)
     {
-        $serializer = $this->get(ServiceProvider::SERIALIZER);
-
         $response->setStatusCode(Response::HTTP_OK);
         $response->headers->set('Content-Type', 'application/json');
-        $response->setContent($serializer->serialize($content, 'json'));
+        $response->setContent(json_encode($content));
 
         return $response;
     }
