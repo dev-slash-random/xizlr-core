@@ -1,7 +1,5 @@
 <?php
-namespace Mooti\Test\Xizlr\Core;
-
-require dirname(__FILE__).'/../vendor/autoload.php';
+namespace Mooti\Test\Unit\Xizlr\Core;
 
 use Mooti\Xizlr\Core\ServiceProvider;
 use ICanBoogie\Inflector;

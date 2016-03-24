@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "4c17921a5ca97ea12d3c91a1f76e33c5",
-    "content-hash": "3cf4f5ac887ed0432c69e6f109fd262c",
+    "hash": "e89b2aa8bfb22a768aa0b1a7050eeb99",
+    "content-hash": "39f349023f97ee92de7ac3dea8f28c66",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -246,16 +246,16 @@
         },
         {
             "name": "mooti/xizlr-testable",
-            "version": "1.0.4",
+            "version": "1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mooti/xizlr-testable.git",
-                "reference": "c3d5141534bab457136feefb2c5312e18c0445f0"
+                "reference": "9eb80df47a4be7fc792294305483a725753bfd3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mooti/xizlr-testable/zipball/c3d5141534bab457136feefb2c5312e18c0445f0",
-                "reference": "c3d5141534bab457136feefb2c5312e18c0445f0",
+                "url": "https://api.github.com/repos/mooti/xizlr-testable/zipball/9eb80df47a4be7fc792294305483a725753bfd3d",
+                "reference": "9eb80df47a4be7fc792294305483a725753bfd3d",
                 "shasum": ""
             },
             "require": {
@@ -275,7 +275,7 @@
             "license": [
                 "Apache-2.0"
             ],
-            "time": "2016-03-22 11:29:55"
+            "time": "2016-03-24 10:49:05"
         },
         {
             "name": "nikic/fast-route",
@@ -1336,16 +1336,16 @@
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-            "version": "3.0.6",
+            "version": "3.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "49bc700750196c04dd6bc2c4c99cb632b893836b"
+                "reference": "7c34c9bdde4131b824086457a3145e27dba10ca1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/49bc700750196c04dd6bc2c4c99cb632b893836b",
-                "reference": "49bc700750196c04dd6bc2c4c99cb632b893836b",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/7c34c9bdde4131b824086457a3145e27dba10ca1",
+                "reference": "7c34c9bdde4131b824086457a3145e27dba10ca1",
                 "shasum": ""
             },
             "require": {
@@ -1363,7 +1363,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.0.x-dev"
+                    "dev-master": "3.1.x-dev"
                 }
             },
             "autoload": {
@@ -1388,7 +1388,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2015-12-08 08:47:06"
+            "time": "2016-03-24 05:58:25"
         },
         {
             "name": "psr/http-message",
@@ -2289,6 +2289,8 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=5.5.9"
+    },
     "platform-dev": []
 }

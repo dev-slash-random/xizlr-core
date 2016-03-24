@@ -1,11 +1,9 @@
 <?php
-namespace Mooti\Test\Xizlr\Core;
-
-require dirname(__FILE__).'/../vendor/autoload.php';
+namespace Mooti\Test\Unit\Xizlr\Core;
 
 use Mooti\Xizlr\Core\Container;
 use Mooti\Xizlr\Core\ServiceProvider;
-use Mooti\Test\Xizlr\Core\Fixture\TestClassWithXizlr;
+use Mooti\Test\Unit\Xizlr\Core\Fixture\TestClassWithXizlr;
 
 class ConatinerTest extends \PHPUnit_Framework_TestCase
 {

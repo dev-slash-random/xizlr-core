@@ -1,10 +1,8 @@
 <?php
-namespace Mooti\Test\Xizlr\Core;
-
-require dirname(__FILE__).'/../vendor/autoload.php';
+namespace Mooti\Test\Unit\Xizlr\Core;
 
 use Mooti\Xizlr\Core\Exception\MethodNotAllowedException;
-use Mooti\Test\Xizlr\Core\Fixture\TestClassWithMethod;
+use Mooti\Test\Unit\Xizlr\Core\Fixture\TestClassWithMethod;
 use Mooti\Xizlr\Core\CompositeContainer;
 use Mooti\Xizlr\Core\ModuleInterface;
 use Mooti\Xizlr\Core\RestApplication;

@@ -1,12 +1,10 @@
 <?php
-namespace Mooti\Test\Xizlr\Core;
-
-require dirname(__FILE__).'/../vendor/autoload.php';
+namespace Mooti\Test\Unit\Xizlr\Core;
 
 use Mooti\Xizlr\Core\Xizlr;
 use Interop\Container\ContainerInterface;
-use Mooti\Test\Xizlr\Core\Fixture\TestClassNoXizlr;
-use Mooti\Test\Xizlr\Core\Fixture\TestClassWithXizlr;
+use Mooti\Test\Unit\Xizlr\Core\Fixture\TestClassNoXizlr;
+use Mooti\Test\Unit\Xizlr\Core\Fixture\TestClassWithXizlr;
 
 class XizlrTest extends \PHPUnit_Framework_TestCase
 {
