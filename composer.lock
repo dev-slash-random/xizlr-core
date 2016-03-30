@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ae01cb88845ec21756004c64d8376544",
-    "content-hash": "65d6cd0a019cbc408f4f04565725b2ab",
+    "hash": "6d2464a391f9aa5af255dcbd621d65d4",
+    "content-hash": "376ef01910134a11e248655077bc7374",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -580,64 +580,6 @@
                 "shim"
             ],
             "time": "2016-01-20 09:13:37"
-        },
-        {
-            "name": "wixel/gump",
-            "version": "1.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Wixel/GUMP.git",
-                "reference": "d6be218b6a45b3dee76a2c18ab0cc530c4b41d9e"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Wixel/GUMP/zipball/d6be218b6a45b3dee76a2c18ab0cc530c4b41d9e",
-                "reference": "d6be218b6a45b3dee76a2c18ab0cc530c4b41d9e",
-                "shasum": ""
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "gump.class.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Colleen Emryss",
-                    "homepage": "http://skitter.tv"
-                },
-                {
-                    "name": "Mark Slingsby",
-                    "homepage": "http://www.rsaweb.co.za"
-                },
-                {
-                    "name": "Roy de Kleijn",
-                    "homepage": "http://roydekleijn.com"
-                },
-                {
-                    "name": "Christian Klisch",
-                    "homepage": "http://www.christian-klisch.de/"
-                },
-                {
-                    "name": "Inge Brattaas",
-                    "homepage": "http://res.no/"
-                },
-                {
-                    "name": "Rob Crowe",
-                    "homepage": "http://vivalacrowe.com"
-                },
-                {
-                    "name": "Sean Nieuwoudt",
-                    "homepage": "https://wixelhq.com"
-                }
-            ],
-            "description": "A fast, extensible & stand-alone PHP input validation class that allows you to validate any data",
-            "homepage": "https://wixelhq.com/",
-            "time": "2015-08-06 07:06:37"
         }
     ],
     "packages-dev": [
