@@ -1,7 +1,7 @@
 <?php
-namespace Mooti\Test\Unit\Xizlr\Core;
+namespace Mooti\Test\PHPUnit\Framework\Unit;
 
-use Mooti\Xizlr\Core\ServiceProvider;
+use Mooti\Framework\ServiceProvider;
 use ICanBoogie\Inflector;
 
 class ServiceProviderTest extends \PHPUnit_Framework_TestCase

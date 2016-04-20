@@ -1,31 +1,29 @@
 <?php
 /**
  *
- * The main Application class
+ * The main Rest Application class
  *
- * @package      Xizlr
- * @subpackage   Core     
+ * @package      Mooti
+ * @subpackage   Framework
  * @author       Ken Lalobo <ken@mooti.io>
  */
 
-namespace Mooti\Xizlr\Core;
+namespace Mooti\Framework\Rest;
 
-use Mooti\Xizlr\Core\Exception\ControllerNotFoundException;
-use Mooti\Xizlr\Core\Exception\ContainerNotFoundException;
-use Mooti\Xizlr\Core\Exception\InvalidControllerException;
-use Mooti\Xizlr\Core\Exception\MethodNotAllowedException;
-use Mooti\Xizlr\Core\Exception\InvalidMethodException;
-use Mooti\Xizlr\Core\Exception\InvalidModuleException;
+use Mooti\Framework\Exception\ControllerNotFoundException;
+use Mooti\Framework\Exception\InvalidControllerException;
+use Mooti\Framework\Exception\MethodNotAllowedException;
+use Mooti\Framework\Exception\InvalidMethodException;
+use Mooti\Framework\Exception\InvalidModuleException;
+use Mooti\Framework\AbstractApplication;
+use Mooti\Framework\ServiceProvider;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Interop\Container\ContainerInterface;
 use League\Route\RouteCollection;
 use ICanBoogie\Inflector;
 
-class RestApplication
+class Application extends AbstractApplication
 {
-    use Xizlr;
-
     /**
      * @var array
      */
@@ -80,54 +78,11 @@ class RestApplication
     }
 
     /**
-     * Bootstrap the application
-     *
-     * @param ServiceProviderInterface $serviceProvider An option service provider
-     */
-    public function bootstrap(ServiceProviderInterface $serviceProvider = null)
-    {
-        $container = $this->createNew(Container::class);
-
-        if (isset($serviceProvider)) {
-            $container->registerServices($serviceProvider);    
-        }
-
-        $xizlrServiceProvider = $this->createNew(ServiceProvider::class);
-        $container->registerServices($xizlrServiceProvider);
-
-        $this->setContainer($container);
-    }
-
-    /**
-     * Register some modules
-     *
-     */
-    public function registerModules($modules = [])
-    {
-        for($i = 0; $i < sizeof($modules); $i++) {
-            $moduleName = $modules[$i];
-
-            $module = $this->createNew($moduleName);
-
-            if (!$module instanceof ModuleInterface) {
-                throw new InvalidModuleException('The module at position '.($i+1).' is invalid');
-            }
-
-            $serviceProvider = $module->getServiceProvider();
-            $this->getContainer()->registerServices($serviceProvider);
-        }
-    }
-
-    /**
      * Run the application
      *
      */
-    public function run()
+    public function runApplication()
     {
-        if (empty($this->getContainer()) == true) {
-            throw new ContainerNotFoundException('The container cannot be found. Have you forgotten to bootstrap your application?');
-        }
-
         $routeCollection = $this->createRouteCollection();
         $dispatcher = $routeCollection->getDispatcher();
 
@@ -141,7 +96,7 @@ class RestApplication
      *
      * @param string $resourceNamePlural The name of the resource being created (e.g 'users' if we are accessing http://account.mooti.io/users)
      *
-     * @return Mooti\Xizlr\Core\BaseController
+     * @return Mooti\Framework\Rest\BaseController
      */
     public function createController($resourceNamePlural)
     {
@@ -152,7 +107,7 @@ class RestApplication
         $controller = $this->createNew($this->controllers[$resourceNamePlural]);
 
         if (!$controller instanceof BaseController) {
-            throw new InvalidControllerException('the controller "'.$this->controllers[$resourceNamePlural].'"" is not an instance of AbstractController');
+            throw new InvalidControllerException('the controller "'.$this->controllers[$resourceNamePlural].'"" is not an instance of BaseController');
         }
 
         return $controller;

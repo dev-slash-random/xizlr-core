@@ -1,6 +1,6 @@
 <?php
 
-namespace Mooti\Test\Unit\Xizlr\Core\Fixture;
+namespace Mooti\Test\PHPUnit\Framework\Unit\Fixture;
 
 class TestClassWithMethod
 {

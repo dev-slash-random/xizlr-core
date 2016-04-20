@@ -1,24 +1,26 @@
 {
-    "name":"mooti/xizlr-core",
+    "name":"mooti/framework",
+    "description": "simple Cli/Rest backend micro framework",
+    "keywords": ["validation", "validator"],
+    "type": "library",
     "license": "Apache-2.0",
     "require": {
         "php": ">=5.5.9",
-        "psr/log": "1.0.*@dev",
-        "mooti/xizlr-testable": "1.0.*",
+        "psr/log": "1.0.*@dev",        
         "icanboogie/inflector": "^1.3",
         "container-interop/container-interop": "^1.1",
         "league/route": "^1.2",
-        "pimple/pimple": "^3.0"
+        "mooti/factory": "^0.0.2"
     },
     "require-dev": {
         "phpunit/phpunit": "5.1.*",        
         "satooshi/php-coveralls": "dev-master"
     },
     "autoload": {
-        "psr-4": {"Mooti\\Xizlr\\Core\\": "src/"}
+        "psr-4": {"Mooti\\Framework\\": "src/"}
     },
     "autoload-dev": {
-        "psr-4": {"Mooti\\Test\\Unit\\Xizlr\\Core\\": "tests/unit"}
+        "psr-4": {"Mooti\\Test\\PHPUnit\\Framework\\": "tests/phpunit/"}
     },
     "config": {
         "bin-dir": "bin/vendor/"

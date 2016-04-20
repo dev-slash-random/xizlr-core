@@ -4,12 +4,12 @@
  *
  * Extends the Interop/NotFoundException
  *
- * @package      Xizlr
- * @subpackage   Core     
+ * @package      Mooti
+ * @subpackage   Framework
  * @author       Ken Lalobo <ken@mooti.io>
  */
 
-namespace Mooti\Xizlr\Core\Exception;
+namespace Mooti\Framework\Exception;
 
 use Interop\Container\Exception\NotFoundException;
 

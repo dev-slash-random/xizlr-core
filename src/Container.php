@@ -2,18 +2,18 @@
 /**
  * Container
  *
- * A simple Container Interop wrapper for pimple.
+ * A simple Container Interop base container.
  *
- * @package      Xizlr
- * @subpackage   Core     
+ * @package      Mooti
+ * @subpackage   Framework     
  * @author       Ken Lalobo <ken@mooti.io>
  */ 
 
-namespace Mooti\Xizlr\Core;
+namespace Mooti\Framework;
 
 use Interop\Container\ContainerInterface;
 
-use Mooti\Xizlr\Core\Exception\ItemNotFoundException;
+use Mooti\Framework\Exception\ItemNotFoundException;
 
 class Container implements ContainerInterface
 {
@@ -61,7 +61,7 @@ class Container implements ContainerInterface
         }
 
         $traits = class_uses($newItem);
-        if (isset($traits[Xizlr::class]) == true) {
+        if (isset($traits[Framework::class]) == true) {
             $newItem->setContainer($this);
         }
 
