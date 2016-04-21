@@ -11,6 +11,18 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function setAndGetNameSucceeds()
+    {
+        $name = 'testApp';
+        $application = $this->getMockForAbstractClass(AbstractApplication::class);
+        self::assertNull($application->getName());
+        $application->setName($name);
+        self::assertEquals($name, $application->getName());
+    }
+
+    /**
+     * @test
+     */
     public function bootstrapWithNoCustomServicePorviderSucceeds()
     {
         $xizlrServiceProvider = $this->getMockBuilder(ServiceProvider::class)
@@ -25,12 +37,12 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
             ->method('registerServices')
             ->with(self::equalTo($xizlrServiceProvider));
 
-        $restApplication = $this->getMockBuilder(AbstractApplication::class)
+        $application = $this->getMockBuilder(AbstractApplication::class)
             ->disableOriginalConstructor()
             ->setMethods(['createNew', 'setContainer', 'runApplication'])
             ->getMock();
 
-        $restApplication->expects(self::exactly(2))
+        $application->expects(self::exactly(2))
             ->method('createNew')
             ->withConsecutive(
                 [self::equalTo(Container::class)],
@@ -38,11 +50,11 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
             )
             ->will(self::onConsecutiveCalls($container, $xizlrServiceProvider));
 
-        $restApplication->expects(self::once())
+        $application->expects(self::once())
             ->method('setContainer')
             ->with(self::equalTo($container));
 
-        $restApplication->bootstrap();
+        $application->bootstrap();
     }
 
     /**
@@ -69,12 +81,12 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
                 [self::equalTo($xizlrServiceProvider)]
             );
 
-        $restApplication = $this->getMockBuilder(AbstractApplication::class)
+        $application = $this->getMockBuilder(AbstractApplication::class)
             ->disableOriginalConstructor()
             ->setMethods(['createNew', 'setContainer', 'runApplication'])
             ->getMock();
 
-        $restApplication->expects(self::exactly(2))
+        $application->expects(self::exactly(2))
             ->method('createNew')
             ->withConsecutive(
                 [self::equalTo(Container::class)],
@@ -82,11 +94,11 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
             )
             ->will(self::onConsecutiveCalls($container, $xizlrServiceProvider));
 
-        $restApplication->expects(self::once())
+        $application->expects(self::once())
             ->method('setContainer')
             ->with(self::equalTo($container));
 
-        $restApplication->bootstrap($serviceProvider);
+        $application->bootstrap($serviceProvider);
     }
 
     /**
@@ -97,17 +109,17 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
     {
         $moduleName = '\\TestModule';
 
-        $restApplication = $this->getMockBuilder(AbstractApplication::class)
+        $application = $this->getMockBuilder(AbstractApplication::class)
             ->disableOriginalConstructor()
             ->setMethods(['createNew', 'runApplication'])
             ->getMock();
 
-        $restApplication->expects(self::once())
+        $application->expects(self::once())
             ->method('createNew')
             ->with(self::equalTo($moduleName))
             ->will(self::returnValue(new \stdClass));
 
-        $restApplication->registerModules([$moduleName]);
+        $application->registerModules([$moduleName]);
     }
 
     /**
@@ -137,21 +149,21 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
             ->method('registerServices')
             ->with(self::equalTo($serviceProvider));
 
-        $restApplication = $this->getMockBuilder(AbstractApplication::class)
+        $application = $this->getMockBuilder(AbstractApplication::class)
             ->disableOriginalConstructor()
             ->setMethods(['getContainer', 'createNew', 'runApplication'])
             ->getMock();
 
-        $restApplication->expects(self::once())
+        $application->expects(self::once())
             ->method('createNew')
             ->with(self::equalTo($moduleName))
             ->will(self::returnValue($module));
 
-        $restApplication->expects(self::once())
+        $application->expects(self::once())
             ->method('getContainer')
             ->will(self::returnValue($container));
 
-        $restApplication->registerModules([$moduleName]);
+        $application->registerModules([$moduleName]);
     }
 
 
@@ -161,16 +173,16 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
      */
     public function runThrowsContainerNotFoundException()
     {
-        $restApplication = $this->getMockBuilder(AbstractApplication::class)
+        $application = $this->getMockBuilder(AbstractApplication::class)
             ->disableOriginalConstructor()
             ->setMethods(['getContainer', 'runApplication'])
             ->getMock();
 
-        $restApplication->expects(self::once())
+        $application->expects(self::once())
             ->method('getContainer')
             ->will(self::returnValue(null));
 
-        $restApplication->run();
+        $application->run();
     }
 
     /**
@@ -182,18 +194,18 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $restApplication = $this->getMockBuilder(AbstractApplication::class)
+        $application = $this->getMockBuilder(AbstractApplication::class)
             ->disableOriginalConstructor()
             ->setMethods(['getContainer', 'runApplication'])
             ->getMock();
 
-        $restApplication->expects(self::once())
+        $application->expects(self::once())
             ->method('getContainer')
             ->will(self::returnValue($container));
 
-        $restApplication->expects(self::once())
+        $application->expects(self::once())
             ->method('runApplication');
 
-        $restApplication->run();
+        $application->run();
     }    
 }
