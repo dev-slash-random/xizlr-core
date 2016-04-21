@@ -1,9 +1,9 @@
 <?php
-namespace Mooti\Test\Unit\Xizlr\Core;
+namespace Mooti\Test\PHPUnit\Framework\Unit;
 
-use Mooti\Xizlr\Core\Container;
-use Mooti\Xizlr\Core\ServiceProvider;
-use Mooti\Test\Unit\Xizlr\Core\Fixture\TestClassWithXizlr;
+use Mooti\Framework\Container;
+use Mooti\Framework\ServiceProvider;
+use Mooti\Test\PHPUnit\Framework\Unit\Fixture\TestClassWithFramework;
 
 class ConatinerTest extends \PHPUnit_Framework_TestCase
 {
@@ -64,10 +64,10 @@ class ConatinerTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function getSucceedsWithXizlrObjectReturnedByCallable()
+    public function getSucceedsWithFrameworkObjectReturnedByCallable()
     {
         $id     = 'foobar';
-        $object = new TestClassWithXizlr;
+        $object = new TestClassWithFramework;
         $item   = function() use ($object) {return $object;};
 
         $container = $this->getMockBuilder(Container::class)

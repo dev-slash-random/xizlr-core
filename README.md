@@ -1,20 +1,20 @@
-# Xizlr Core
+# Moot Framework
 
-[![Build Status](https://travis-ci.org/mooti/xizlr-core.svg?branch=master)](https://travis-ci.org/mooti/xizlr-core)
-[![Coverage Status](https://coveralls.io/repos/github/mooti/xizlr-core/badge.svg?branch=master)](https://coveralls.io/github/mooti/xizlr-core?branch=master)
-[![Latest Stable Version](https://poser.pugx.org/mooti/xizlr-core/v/stable)](https://packagist.org/packages/mooti/xizlr-core)
-[![Total Downloads](https://poser.pugx.org/mooti/xizlr-core/downloads)](https://packagist.org/packages/mooti/xizlr-core)
-[![Latest Unstable Version](https://poser.pugx.org/mooti/xizlr-core/v/unstable)](https://packagist.org/packages/mooti/xizlr-core)
-[![License](https://poser.pugx.org/mooti/xizlr-core/license)](https://packagist.org/packages/mooti/xizlr-core)
+[![Build Status](https://travis-ci.org/mooti/framework.svg?branch=master)](https://travis-ci.org/mooti/framework)
+[![Coverage Status](https://coveralls.io/repos/github/mooti/framework/badge.svg?branch=master)](https://coveralls.io/github/mooti/framework?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/mooti/framework/v/stable)](https://packagist.org/packages/mooti/framework)
+[![Total Downloads](https://poser.pugx.org/mooti/framework/downloads)](https://packagist.org/packages/mooti/framework)
+[![Latest Unstable Version](https://poser.pugx.org/mooti/framework/v/unstable)](https://packagist.org/packages/mooti/framework)
+[![License](https://poser.pugx.org/mooti/framework/license)](https://packagist.org/packages/mooti/framework)
 
-The core classes for the Xizlr lightweight framework.
+A simple Cli/Rest backend micro framework
 
 ### Installation
 
 You can install this through packagist
 
 ```
-$ composer require mooti/xizlr-core
+$ composer require mooti/framework
 ```
 
 ### Run the tests

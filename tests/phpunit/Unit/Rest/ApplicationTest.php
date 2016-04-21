@@ -1,14 +1,14 @@
 <?php
-namespace Mooti\Test\Unit\Xizlr\Core;
+namespace Mooti\Test\PHPUnit\Framework\Unit\Rest;
 
-use Mooti\Xizlr\Core\Exception\MethodNotAllowedException;
-use Mooti\Test\Unit\Xizlr\Core\Fixture\TestClassWithMethod;
-use Mooti\Xizlr\Core\CompositeContainer;
-use Mooti\Xizlr\Core\ModuleInterface;
-use Mooti\Xizlr\Core\RestApplication;
-use Mooti\Xizlr\Core\ServiceProvider;
-use Mooti\Xizlr\Core\BaseController;
-use Mooti\Xizlr\Core\Container;
+use Mooti\Framework\Exception\MethodNotAllowedException;
+use Mooti\Test\PHPUnit\Framework\Unit\Fixture\TestClassWithMethod;
+use Mooti\Framework\Rest\Application;
+use Mooti\Framework\Rest\BaseController;
+use Mooti\Framework\CompositeContainer;
+use Mooti\Framework\ModuleInterface;
+use Mooti\Framework\ServiceProvider;
+use Mooti\Framework\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Interop\Container\ContainerInterface;
@@ -16,14 +16,14 @@ use League\Route\RouteCollection;
 use League\Route\Dispatcher;
 use ICanBoogie\Inflector;
 
-class RestApplicationTest extends \PHPUnit_Framework_TestCase
+class ApplicationTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
      */
     public function createRequestSucceeds()
     {
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
@@ -41,7 +41,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
             ->setMethods(['createNew'])
             ->getMock();
@@ -77,172 +77,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function bootstrapWithNoCustomServicePorviderSucceeds()
-    {
-        $xizlrServiceProvider = $this->getMockBuilder(ServiceProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $container = $this->getMockBuilder(Container::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $container->expects(self::once())
-            ->method('registerServices')
-            ->with(self::equalTo($xizlrServiceProvider));
-
-        $restApplication = $this->getMockBuilder(RestApplication::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['createNew', 'setContainer'])
-            ->getMock();
-
-        $restApplication->expects(self::exactly(2))
-            ->method('createNew')
-            ->withConsecutive(
-                [self::equalTo(Container::class)],
-                [self::equalTo(ServiceProvider::class)]
-            )
-            ->will(self::onConsecutiveCalls($container, $xizlrServiceProvider));
-
-        $restApplication->expects(self::once())
-            ->method('setContainer')
-            ->with(self::equalTo($container));
-
-        $restApplication->bootstrap();
-    }
-
-    /**
-     * @test
-     */
-    public function bootstrapWithCustomServicePorviderSucceeds()
-    {
-        $serviceProvider = $this->getMockBuilder(ServiceProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $xizlrServiceProvider = $this->getMockBuilder(ServiceProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $container = $this->getMockBuilder(Container::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $container->expects(self::exactly(2))
-            ->method('registerServices')
-            ->withConsecutive(
-                [self::equalTo($serviceProvider)],
-                [self::equalTo($xizlrServiceProvider)]
-            );
-
-        $restApplication = $this->getMockBuilder(RestApplication::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['createNew', 'setContainer'])
-            ->getMock();
-
-        $restApplication->expects(self::exactly(2))
-            ->method('createNew')
-            ->withConsecutive(
-                [self::equalTo(Container::class)],
-                [self::equalTo(ServiceProvider::class)]
-            )
-            ->will(self::onConsecutiveCalls($container, $xizlrServiceProvider));
-
-        $restApplication->expects(self::once())
-            ->method('setContainer')
-            ->with(self::equalTo($container));
-
-        $restApplication->bootstrap($serviceProvider);
-    }
-
-    /**
-     * @test
-     * @expectedException Mooti\Xizlr\Core\Exception\InvalidModuleException
-     */
-    public function registerModulesThrowsInvalidModuleException()
-    {
-        $moduleName = '\\TestModule';
-
-        $restApplication = $this->getMockBuilder(RestApplication::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['createNew'])
-            ->getMock();
-
-        $restApplication->expects(self::once())
-            ->method('createNew')
-            ->with(self::equalTo($moduleName))
-            ->will(self::returnValue(new \stdClass));
-
-        $restApplication->registerModules([$moduleName]);
-    }
-
-    /**
-     * @test     
-     */
-    public function registerModulesSucceeds()
-    {
-        $moduleName = '\\TestModule';
-
-        $serviceProvider = $this->getMockBuilder(ServiceProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $module = $this->getMockBuilder(ModuleInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $module->expects(self::once())
-            ->method('getServiceProvider')
-            ->will(self::returnValue($serviceProvider));
-
-        $container = $this->getMockBuilder(Container::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $container->expects(self::once())
-            ->method('registerServices')
-            ->with(self::equalTo($serviceProvider));
-
-        $restApplication = $this->getMockBuilder(RestApplication::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getContainer', 'createNew'])
-            ->getMock();
-
-        $restApplication->expects(self::once())
-            ->method('createNew')
-            ->with(self::equalTo($moduleName))
-            ->will(self::returnValue($module));
-
-        $restApplication->expects(self::once())
-            ->method('getContainer')
-            ->will(self::returnValue($container));
-
-        $restApplication->registerModules([$moduleName]);
-    }
-
-
-    /**
-     * @test
-     * @expectedException Mooti\Xizlr\Core\Exception\ContainerNotFoundException
-     */
-    public function runThrowsConatinerNotFoundException()
-    {
-        $restApplication = $this->getMockBuilder(RestApplication::class)
-            ->disableOriginalConstructor()
-            ->setMethods(['getContainer'])
-            ->getMock();
-
-        $restApplication->expects(self::once())
-            ->method('getContainer')
-            ->will(self::returnValue(null));
-
-        $restApplication->run();
-    }
-
-    /**
-     * @test
-     */
-    public function runSucceeds()
+    public function runApplicationSucceeds()
     {
         $requestMethod = 'GET';
         $requestPath   = '/test';
@@ -294,14 +129,10 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
-            ->setMethods(['createRouteCollection', 'createRequest', 'getContainer'])
+            ->setMethods(['createRouteCollection', 'createRequest'])
             ->getMock();
-
-        $restApplication->expects(self::once())
-            ->method('getContainer')
-            ->will(self::returnValue($container));
 
         $restApplication->expects(self::once())
             ->method('createRouteCollection')
@@ -315,7 +146,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->method('createRequest')
             ->will(self::returnValue($request));
 
-        self::assertNull($restApplication->run());
+        self::assertNull($restApplication->runApplication());
     }
 
     /**
@@ -331,7 +162,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->setConstructorArgs([$controllers])
             ->setMethods(['createNew'])
             ->getMock();
@@ -346,13 +177,13 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Mooti\Xizlr\Core\Exception\ControllerNotFoundException
+     * @expectedException Mooti\Framework\Exception\ControllerNotFoundException
      */
     public function createControllerThrowsControllerNotFoundException()
     {
         $controllers = [];
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->setConstructorArgs([$controllers])
             ->setMethods(null)
             ->getMock();
@@ -362,7 +193,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Mooti\Xizlr\Core\Exception\InvalidControllerException
+     * @expectedException Mooti\Framework\Exception\InvalidControllerException
      */
     public function createControllerThrowsInvalidControllerException()
     {
@@ -370,10 +201,15 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             'test' => '\\stdClass'
         ];
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->setConstructorArgs([$controllers])
-            ->setMethods(null)
+            ->setMethods(['createNew'])
             ->getMock();
+
+        $restApplication->expects(self::once())
+            ->method('createNew')
+            ->with(self::equalTo('\\stdClass'))
+            ->will(self::returnValue(new \stdClass));
 
         $restApplication->createController('test');
     }
@@ -390,7 +226,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
         $controller =  new TestClassWithMethod;
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
             ->setMethods(['createController'])
             ->getMock();
@@ -405,7 +241,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Mooti\Xizlr\Core\Exception\InvalidMethodException
+     * @expectedException Mooti\Framework\Exception\InvalidMethodException
      */
     public function callMethodThrowsInvalidMethodException()
     {
@@ -416,7 +252,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
             ->setMethods(['createController'])
             ->getMock();
@@ -455,7 +291,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->with(self::equalTo($resourceNamePlural))
             ->will(self::returnValue($resourceNameCamel));
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
             ->setMethods(['callMethod', 'get'])
             ->getMock();
@@ -509,7 +345,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->with(self::equalTo($resourceNameSingle))
             ->will(self::returnValue($resourceNameSingleCamel));
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
             ->setMethods(['callMethod', 'get'])
             ->getMock();
@@ -564,7 +400,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->with(self::equalTo($resourceNameSingle))
             ->will(self::returnValue($resourceNameSingleCamel));
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
             ->setMethods(['callMethod', 'get'])
             ->getMock();
@@ -619,7 +455,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->with(self::equalTo($resourceNameSingle))
             ->will(self::returnValue($resourceNameSingleCamel));
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
             ->setMethods(['callMethod', 'get'])
             ->getMock();
@@ -674,7 +510,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->with(self::equalTo($resourceNameSingle))
             ->will(self::returnValue($resourceNameSingleCamel));
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
             ->setMethods(['callMethod', 'get'])
             ->getMock();
@@ -729,7 +565,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->with(self::equalTo($resourceNameSingle))
             ->will(self::returnValue($resourceNameSingleCamel));
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
             ->setMethods(['callMethod', 'get'])
             ->getMock();
@@ -791,7 +627,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
                 self::onConsecutiveCalls($resourceNameSingleCamel, $childNameCamel)
             );
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
             ->setMethods(['callMethod', 'get'])
             ->getMock();
@@ -857,7 +693,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
                 self::onConsecutiveCalls($resourceNameSingleCamel, $childNameSingleCamel)
             );
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
             ->setMethods(['callMethod', 'get'])
             ->getMock();
@@ -881,7 +717,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Mooti\Xizlr\Core\Exception\MethodNotAllowedException
+     * @expectedException Mooti\Framework\Exception\MethodNotAllowedException
      */
     public function callMethodNotAllowedThrowsMethodNotAllowedException()
     {
@@ -893,7 +729,7 @@ class RestApplicationTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $restApplication = $this->getMockBuilder(RestApplication::class)
+        $restApplication = $this->getMockBuilder(Application::class)
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();

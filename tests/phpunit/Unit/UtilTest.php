@@ -1,7 +1,7 @@
 <?php
-namespace Mooti\Test\Unit\Xizlr\Core;
+namespace Mooti\Test\PHPUnit\Framework\Unit;
 
-use Mooti\Xizlr\Core\Util;
+use Mooti\Framework\Util;
 
 class UtilTest extends \PHPUnit_Framework_TestCase
 {

@@ -7,14 +7,14 @@
 * @author Ken Lalobo
 *
 */
-namespace Mooti\Xizlr\Core;
+namespace Mooti\Framework;
 
-use Mooti\Xizlr\Testable\Testable;
+use Mooti\Factory\Factory;
 use Interop\Container\ContainerInterface;
 
-trait Xizlr
+trait Framework
 {
-    use Testable;
+    use Factory;
 
     /**
      * @var ContainerInterface $container
@@ -50,7 +50,7 @@ trait Xizlr
         
         $traits = class_uses($object);
 
-        if (isset($traits[Xizlr::class]) == true) {
+        if (isset($traits[Framework::class]) == true) {
             $object->setContainer($this->container);
         }
 

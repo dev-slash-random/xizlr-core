@@ -1,15 +1,12 @@
 <?php
 
-namespace Mooti\Xizlr\Core;
+namespace Mooti\Framework;
 
-use JMS\Serializer\SerializerBuilder;
 use ICanBoogie\Inflector;
-use GUMP;
 
 class ServiceProvider implements ServiceProviderInterface
 {
-    const INFLECTOR  = 'xizlr.core.inflector';
-    const VALIDATOR  = 'xizlr.core.validator';
+    const INFLECTOR  = 'mooti.framework.inflector';
 
     /**
      * Get the details of the services we are providing     
@@ -20,7 +17,6 @@ class ServiceProvider implements ServiceProviderInterface
     {
         return [
             self::INFLECTOR  => function () { return Inflector::get('en');},
-            self::VALIDATOR  => function () { return new GUMP();}
         ];
     }
 }

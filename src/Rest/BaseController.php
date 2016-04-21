@@ -4,20 +4,22 @@
  *
  * Base class for controllers. Extend this with you own controller.
  *
- * @package      Xizlr
- * @subpackage   Core
+ * @package      Mooti
+ * @subpackage   Framework
  * @author       Ken Lalobo <ken@mooti.io>
  */
 
-namespace Mooti\Xizlr\Core;
+namespace Mooti\Framework\Rest;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use JsonSerializable;
 
+use Mooti\Framework\Framework;
+
 class BaseController
 {
-    use Xizlr;
+    use Framework;
 
     /**
      * Renders any given content as a json string

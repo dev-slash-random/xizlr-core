@@ -1,6 +1,6 @@
 <?php
 
-namespace Mooti\Xizlr\Core;
+namespace Mooti\Framework;
 
 class Util
 {
