@@ -19,6 +19,21 @@ abstract class AbstractApplication
     use Framework;
 
     /**
+     * @var array
+     */
+    protected $name;
+
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
      * Bootstrap the application
      *
      * @param ServiceProviderInterface $serviceProvider An option service provider

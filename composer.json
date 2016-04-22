@@ -10,11 +10,13 @@
         "icanboogie/inflector": "^1.3",
         "container-interop/container-interop": "^1.1",
         "league/route": "^1.2",
-        "mooti/factory": "^0.0.2"
+        "mooti/factory": "^0.0.2",
+        "symfony/console": "^3.0"
     },
     "require-dev": {
         "phpunit/phpunit": "5.1.*",        
-        "satooshi/php-coveralls": "dev-master"
+        "satooshi/php-coveralls": "dev-master",
+        "symfony/event-dispatcher": "^3.0"
     },
     "autoload": {
         "psr-4": {"Mooti\\Framework\\": "src/"}
