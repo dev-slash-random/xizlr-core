@@ -46,7 +46,8 @@ trait Framework
      */
     public function createNew($className)
     {
-        $object = $this->_createNew($className);
+        $constructArguments = func_get_args();
+        $object = $this->_createNew( ...$constructArguments);
         
         $traits = class_uses($object);
 
