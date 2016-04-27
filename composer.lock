@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "80f6909ee5a2825569aebc62de62feb3",
-    "content-hash": "0633b8bc806141f27ef2543640c37d09",
+    "hash": "cbc971f7174e3b05fe9cb1dd789e1efb",
+    "content-hash": "298eafd56cfa5c64fbe702f01f2a2ebb",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -246,16 +246,16 @@
         },
         {
             "name": "mooti/factory",
-            "version": "0.0.2",
+            "version": "0.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mooti/factory.git",
-                "reference": "7447faa13c08f515a97fd51ed848362c790a53e5"
+                "reference": "13c611912c37cfdb4bf31d44a48551609526dc51"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mooti/factory/zipball/7447faa13c08f515a97fd51ed848362c790a53e5",
-                "reference": "7447faa13c08f515a97fd51ed848362c790a53e5",
+                "url": "https://api.github.com/repos/mooti/factory/zipball/13c611912c37cfdb4bf31d44a48551609526dc51",
+                "reference": "13c611912c37cfdb4bf31d44a48551609526dc51",
                 "shasum": ""
             },
             "require": {
@@ -282,7 +282,7 @@
                 "testable",
                 "testing"
             ],
-            "time": "2016-04-20 10:41:41"
+            "time": "2016-04-27 08:28:37"
         },
         {
             "name": "nikic/fast-route",
