@@ -24,12 +24,12 @@ class BaseController
     /**
      * Renders any given content as a json string
      *
-     * @param JsonSerializable $content  This can be serializable data type.
-     * @param Response         $response The response object
+     * @param mixed    $content  This can be serializable data type.
+     * @param Response $response The response object
      *
      * @return Response $response
      */
-    public function render(JsonSerializable $content, Response $response)
+    public function render($content, Response $response)
     {
         $response->setStatusCode(Response::HTTP_OK);
         $response->headers->set('Content-Type', 'application/json');
