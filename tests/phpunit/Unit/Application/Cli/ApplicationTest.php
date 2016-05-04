@@ -1,7 +1,7 @@
 <?php
-namespace Mooti\Test\PHPUnit\Framework\Unit\Cli;
+namespace Mooti\Test\PHPUnit\Framework\Unit\Application\Cli;
 
-use Mooti\Framework\Cli\Application;
+use Mooti\Framework\Application\Cli\Application;
 use Symfony\Component\Console\Application as SymfonyApplication;
 use Symfony\Component\Console\Command\Command;
 
@@ -12,6 +12,8 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
      */
     public function runApplicationSucceeds()
     {
+        $name = 'testApp';
+
         $command1 = $this->getMockBuilder(Command::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -41,13 +43,17 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
         $application = $this->getMockBuilder(Application::class)
             ->setConstructorArgs([$commandNames])
-            ->setMethods(['createNew'])
+            ->setMethods(['createNew', 'getName'])
             ->getMock();
+
+        $application->expects(self::once())
+            ->method('getName')
+            ->will(self::returnValue($name));
 
         $application->expects(self::exactly(3))
             ->method('createNew')
             ->withConsecutive(
-                [SymfonyApplication::class, null],
+                [SymfonyApplication::class, $name],
                 [$commandNames[0]],
                 [$commandNames[1]]
             )

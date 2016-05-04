@@ -1,7 +1,7 @@
 <?php
-namespace Mooti\Test\PHPUnit\Framework\Unit\Rest;
+namespace Mooti\Test\PHPUnit\Framework\Unit\Application\Rest;
 
-use Mooti\Framework\Rest\BaseController;
+use Mooti\Framework\Application\Rest\BaseController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use JsonSerializable;

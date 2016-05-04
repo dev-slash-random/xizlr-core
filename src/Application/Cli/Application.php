@@ -8,10 +8,10 @@
  * @author       Ken Lalobo <ken@mooti.io>
  */
 
-namespace Mooti\Framework\Cli;
+namespace Mooti\Framework\Application\Cli;
 
 use Symfony\Component\Console\Application as SymfonyApplication;
-use Mooti\Framework\AbstractApplication;
+use Mooti\Framework\Application\AbstractApplication;
 
 class Application extends AbstractApplication
 {
@@ -34,7 +34,7 @@ class Application extends AbstractApplication
      */
     public function runApplication()
     {
-        $application = $this->createNew(SymfonyApplication::class, $this->name);
+        $application = $this->createNew(SymfonyApplication::class, $this->getName());
         foreach ($this->commands as $command) {
             $application->add($this->createNew($command));
         }        

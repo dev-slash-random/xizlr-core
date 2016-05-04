@@ -9,7 +9,7 @@
  * @author       Ken Lalobo <ken@mooti.io>
  */
 
-namespace Mooti\Framework\Rest;
+namespace Mooti\Framework\Application\Rest;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

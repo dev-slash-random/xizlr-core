@@ -2,10 +2,10 @@
 namespace Mooti\Test\PHPUnit\Framework\Unit;
 
 use Mooti\Framework\Container;
-use Mooti\Framework\ServiceProvider;
+use Mooti\Framework\ServiceProvider\ServiceProvider;
 use Mooti\Test\PHPUnit\Framework\Unit\Fixture\TestClassWithFramework;
 
-class ConatinerTest extends \PHPUnit_Framework_TestCase
+class ContainerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test

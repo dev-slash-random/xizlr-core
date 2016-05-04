@@ -8,29 +8,48 @@
  * @author       Ken Lalobo <ken@mooti.io>
  */
 
-namespace Mooti\Framework;
+namespace Mooti\Framework\Application;
 
 use Mooti\Framework\Framework;
+use Mooti\Framework\Container;
 use Mooti\Framework\Exception\InvalidModuleException;
 use Mooti\Framework\Exception\ContainerNotFoundException;
+use Mooti\Framework\ServiceProvider\ServiceProvider;
+use Mooti\Framework\ServiceProvider\ServiceProviderInterface;
+use Mooti\Framework\ModuleInterface;
 
 abstract class AbstractApplication
 {
     use Framework;
 
     /**
-     * @var array
+     * Set the application name
+     *
+     * @param string $name The application name
      */
-    protected $name;
-
     public function setName($name)
     {
-        $this->name = $name;
+        $this->get(ServiceProvider::APPLICATION_RUNTIME)->setName($name);
     }
 
+    /**
+     * Get the application name
+     *
+     * @return string The application name
+     */
     public function getName()
     {
-        return $this->name;
+        return $this->get(ServiceProvider::APPLICATION_RUNTIME)->getName();
+    }
+
+    /**
+     * Get the root directory
+     *
+     * @return string The root directory
+     */
+    public function getRootDirectory()
+    {
+        return $this->get(ServiceProvider::APPLICATION_RUNTIME)->getRootDirectory();
     }
 
     /**

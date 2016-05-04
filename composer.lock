@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cbc971f7174e3b05fe9cb1dd789e1efb",
-    "content-hash": "298eafd56cfa5c64fbe702f01f2a2ebb",
+    "hash": "70deff9e3044ec64ab2a91ce19ff85c6",
+    "content-hash": "8d74f978d52f744503f8fdc135b2e9d9",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -246,16 +246,16 @@
         },
         {
             "name": "mooti/factory",
-            "version": "0.0.3",
+            "version": "0.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mooti/factory.git",
-                "reference": "13c611912c37cfdb4bf31d44a48551609526dc51"
+                "reference": "ba8ad02f231944c1854300428ab0afcccf772c40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mooti/factory/zipball/13c611912c37cfdb4bf31d44a48551609526dc51",
-                "reference": "13c611912c37cfdb4bf31d44a48551609526dc51",
+                "url": "https://api.github.com/repos/mooti/factory/zipball/ba8ad02f231944c1854300428ab0afcccf772c40",
+                "reference": "ba8ad02f231944c1854300428ab0afcccf772c40",
                 "shasum": ""
             },
             "require": {
@@ -282,7 +282,46 @@
                 "testable",
                 "testing"
             ],
-            "time": "2016-04-27 08:28:37"
+            "time": "2016-05-04 14:02:21"
+        },
+        {
+            "name": "mooti/validator",
+            "version": "0.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mooti/validator.git",
+                "reference": "134627a8d947b03be18c79a0f8ad6afd7727d674"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mooti/validator/zipball/134627a8d947b03be18c79a0f8ad6afd7727d674",
+                "reference": "134627a8d947b03be18c79a0f8ad6afd7727d674",
+                "shasum": ""
+            },
+            "require": {
+                "mooti/factory": "^0.0.4",
+                "php": ">=5.5.9"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "5.1.*",
+                "satooshi/php-coveralls": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Mooti\\Validator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "PHP validator for json style data structures",
+            "keywords": [
+                "validation",
+                "validator"
+            ],
+            "time": "2016-05-10 16:01:59"
         },
         {
             "name": "nikic/fast-route",
