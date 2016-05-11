@@ -1,8 +1,9 @@
 <?php
-namespace Mooti\Test\PHPUnit\Framework\Unit;
+namespace Mooti\Test\PHPUnit\Framework\Unit\Application;
 
-use Mooti\Framework\AbstractApplication;
-use Mooti\Framework\ServiceProvider;
+use Mooti\Framework\Application\AbstractApplication;
+use Mooti\Framework\Application\ApplicationRuntime;
+use Mooti\Framework\ServiceProvider\ServiceProvider;
 use Mooti\Framework\Container;
 use Mooti\Framework\ModuleInterface;
 
@@ -11,13 +12,85 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function setAndGetNameSucceeds()
+    public function setNameSucceeds()
     {
         $name = 'testApp';
-        $application = $this->getMockForAbstractClass(AbstractApplication::class);
-        self::assertNull($application->getName());
+
+        $applicationRuntime = $this->getMockBuilder(ApplicationRuntime::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $applicationRuntime->expects(self::once())
+            ->method('setName')
+            ->with($name);
+
+        $application = $this->getMockBuilder(AbstractApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['get', 'runApplication'])
+            ->getMock();
+
+        $application->expects(self::once())
+            ->method('get')
+            ->with(self::equalTo(ServiceProvider::APPLICATION_RUNTIME))
+            ->will(self::returnValue($applicationRuntime));
+
         $application->setName($name);
+    }
+
+    /**
+     * @test
+     */
+    public function getNameSucceeds()
+    {
+        $name = 'testApp';
+
+        $applicationRuntime = $this->getMockBuilder(ApplicationRuntime::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $applicationRuntime->expects(self::once())
+            ->method('getName')
+            ->will(self::returnValue($name));
+
+        $application = $this->getMockBuilder(AbstractApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['get', 'runApplication'])
+            ->getMock();
+
+        $application->expects(self::once())
+            ->method('get')
+            ->with(self::equalTo(ServiceProvider::APPLICATION_RUNTIME))
+            ->will(self::returnValue($applicationRuntime));
+
         self::assertEquals($name, $application->getName());
+    }
+
+    /**
+     * @test
+     */
+    public function getRootDirectorySucceeds()
+    {
+        $name = '/foo/bar';
+
+        $applicationRuntime = $this->getMockBuilder(ApplicationRuntime::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $applicationRuntime->expects(self::once())
+            ->method('getRootDirectory')
+            ->will(self::returnValue($name));
+
+        $application = $this->getMockBuilder(AbstractApplication::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['get', 'runApplication'])
+            ->getMock();
+
+        $application->expects(self::once())
+            ->method('get')
+            ->with(self::equalTo(ServiceProvider::APPLICATION_RUNTIME))
+            ->will(self::returnValue($applicationRuntime));
+
+        self::assertEquals($name, $application->getRootDirectory());
     }
 
     /**
@@ -25,7 +98,7 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
      */
     public function bootstrapWithNoCustomServicePorviderSucceeds()
     {
-        $xizlrServiceProvider = $this->getMockBuilder(ServiceProvider::class)
+        $mootiServiceProvider = $this->getMockBuilder(ServiceProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -35,7 +108,7 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
 
         $container->expects(self::once())
             ->method('registerServices')
-            ->with(self::equalTo($xizlrServiceProvider));
+            ->with(self::equalTo($mootiServiceProvider));
 
         $application = $this->getMockBuilder(AbstractApplication::class)
             ->disableOriginalConstructor()
@@ -48,7 +121,7 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
                 [self::equalTo(Container::class)],
                 [self::equalTo(ServiceProvider::class)]
             )
-            ->will(self::onConsecutiveCalls($container, $xizlrServiceProvider));
+            ->will(self::onConsecutiveCalls($container, $mootiServiceProvider));
 
         $application->expects(self::once())
             ->method('setContainer')
@@ -66,7 +139,7 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $xizlrServiceProvider = $this->getMockBuilder(ServiceProvider::class)
+        $mootiServiceProvider = $this->getMockBuilder(ServiceProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -78,7 +151,7 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
             ->method('registerServices')
             ->withConsecutive(
                 [self::equalTo($serviceProvider)],
-                [self::equalTo($xizlrServiceProvider)]
+                [self::equalTo($mootiServiceProvider)]
             );
 
         $application = $this->getMockBuilder(AbstractApplication::class)
@@ -92,7 +165,7 @@ class AbstractApplicationTest extends \PHPUnit_Framework_TestCase
                 [self::equalTo(Container::class)],
                 [self::equalTo(ServiceProvider::class)]
             )
-            ->will(self::onConsecutiveCalls($container, $xizlrServiceProvider));
+            ->will(self::onConsecutiveCalls($container, $mootiServiceProvider));
 
         $application->expects(self::once())
             ->method('setContainer')

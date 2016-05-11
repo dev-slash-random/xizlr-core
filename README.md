@@ -22,5 +22,5 @@ $ composer require mooti/framework
 If you would like to run the tests. Use the following:
 
 ```
-$ ./bin/vendor/phpunit -c config/phpunit.xml
+$ ./vendor/bin/phpunit -c config/phpunit.xml
 ```

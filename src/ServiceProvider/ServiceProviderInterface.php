@@ -1,6 +1,6 @@
 <?php
 
-namespace Mooti\Framework;
+namespace Mooti\Framework\ServiceProvider;
 
 interface ServiceProviderInterface
 {

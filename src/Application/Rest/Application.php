@@ -8,15 +8,15 @@
  * @author       Ken Lalobo <ken@mooti.io>
  */
 
-namespace Mooti\Framework\Rest;
+namespace Mooti\Framework\Application\Rest;
 
 use Mooti\Framework\Exception\ControllerNotFoundException;
 use Mooti\Framework\Exception\InvalidControllerException;
 use Mooti\Framework\Exception\MethodNotAllowedException;
 use Mooti\Framework\Exception\InvalidMethodException;
 use Mooti\Framework\Exception\InvalidModuleException;
-use Mooti\Framework\AbstractApplication;
-use Mooti\Framework\ServiceProvider;
+use Mooti\Framework\Application\AbstractApplication;
+use Mooti\Framework\ServiceProvider\ServiceProvider;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use League\Route\RouteCollection;

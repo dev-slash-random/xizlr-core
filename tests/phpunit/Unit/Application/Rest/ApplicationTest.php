@@ -1,13 +1,13 @@
 <?php
-namespace Mooti\Test\PHPUnit\Framework\Unit\Rest;
+namespace Mooti\Test\PHPUnit\Framework\Unit\Application\Rest;
 
 use Mooti\Framework\Exception\MethodNotAllowedException;
 use Mooti\Test\PHPUnit\Framework\Unit\Fixture\TestClassWithMethod;
-use Mooti\Framework\Rest\Application;
-use Mooti\Framework\Rest\BaseController;
+use Mooti\Framework\Application\Rest\Application;
+use Mooti\Framework\Application\Rest\BaseController;
 use Mooti\Framework\CompositeContainer;
 use Mooti\Framework\ModuleInterface;
-use Mooti\Framework\ServiceProvider;
+use Mooti\Framework\ServiceProvider\ServiceProvider;
 use Mooti\Framework\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

@@ -12,11 +12,14 @@
 namespace Mooti\Framework;
 
 use Interop\Container\ContainerInterface;
-
+use Mooti\Framework\ServiceProvider\ServiceProviderInterface;
 use Mooti\Framework\Exception\ItemNotFoundException;
 
 class Container implements ContainerInterface
 {
+    /**
+     * @var array $items The items in the container
+     */
     private $items = array();
 
     /**

@@ -1,14 +1,21 @@
 <?php
+/**
+ * Util class
+ *
+ * @package      Mooti
+ * @subpackage   Framework
+ * @author       Ken Lalobo <ken@mooti.io>
+ */
 
-namespace Mooti\Framework;
+namespace Mooti\Framework\Util;
 
-class Util
+class IdGenerator
 {
     /**
      * Generate a valid V4 UUID
      * @return string
      */
-    public static function uuidV4()
+    public function uuidV4()
     {
         return sprintf(
             '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
