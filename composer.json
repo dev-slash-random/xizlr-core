@@ -11,8 +11,8 @@
         "container-interop/container-interop": "^1.1",
         "league/route": "^1.2",
         "symfony/console": "^3.0",
-        "mooti/factory": "^0.0.5",
-        "mooti/validator": "^0.0.5"
+        "mooti/factory": "^0.0.6",
+        "mooti/validator": "^0.0.6"
     },
     "require-dev": {
         "phpunit/phpunit": "5.1.*",        
@@ -23,6 +23,6 @@
         "psr-4": {"Mooti\\Framework\\": "src/"}
     },
     "autoload-dev": {
-        "psr-4": {"Mooti\\Test\\PHPUnit\\Framework\\": "tests/phpunit/"}
+        "psr-4": {"Mooti\\Test\\PHPUnit\\Framework\\": "tests/phpunit/src"}
     }
 }
