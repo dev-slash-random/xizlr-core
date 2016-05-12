@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "792e49e40b4a55960e556bfcc2a58446",
-    "content-hash": "ba38823c0746055320e1f0cc0f07c9f2",
+    "hash": "0e01c1468f564c3ddb5ac768747e4ea3",
+    "content-hash": "52de0a9817f9034b025e8c5dd02ab73b",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -246,16 +246,16 @@
         },
         {
             "name": "mooti/factory",
-            "version": "0.0.5",
+            "version": "0.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mooti/factory.git",
-                "reference": "7072a0aee2d6c62bc75c4ef7770730d496d1302a"
+                "reference": "c17f6ea2f0b8ce91899312cb40be4cfe568e05ef"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mooti/factory/zipball/7072a0aee2d6c62bc75c4ef7770730d496d1302a",
-                "reference": "7072a0aee2d6c62bc75c4ef7770730d496d1302a",
+                "url": "https://api.github.com/repos/mooti/factory/zipball/c17f6ea2f0b8ce91899312cb40be4cfe568e05ef",
+                "reference": "c17f6ea2f0b8ce91899312cb40be4cfe568e05ef",
                 "shasum": ""
             },
             "require": {
@@ -282,24 +282,24 @@
                 "testable",
                 "testing"
             ],
-            "time": "2016-05-11 13:37:51"
+            "time": "2016-05-12 09:06:05"
         },
         {
             "name": "mooti/validator",
-            "version": "0.0.5",
+            "version": "0.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mooti/validator.git",
-                "reference": "648f375e54d6ef305d254011cc9447ca6fc7512a"
+                "reference": "0acd414dbc971fa68ef7b90b20558dcc71db13a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mooti/validator/zipball/648f375e54d6ef305d254011cc9447ca6fc7512a",
-                "reference": "648f375e54d6ef305d254011cc9447ca6fc7512a",
+                "url": "https://api.github.com/repos/mooti/validator/zipball/0acd414dbc971fa68ef7b90b20558dcc71db13a6",
+                "reference": "0acd414dbc971fa68ef7b90b20558dcc71db13a6",
                 "shasum": ""
             },
             "require": {
-                "mooti/factory": "^0.0.5",
+                "mooti/factory": "^0.0.6",
                 "php": ">=5.5.9"
             },
             "require-dev": {
@@ -321,7 +321,7 @@
                 "validation",
                 "validator"
             ],
-            "time": "2016-05-11 13:50:41"
+            "time": "2016-05-12 09:11:18"
         },
         {
             "name": "nikic/fast-route",
