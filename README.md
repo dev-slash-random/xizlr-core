@@ -9,6 +9,10 @@
 
 A simple Cli/Rest backend micro framework
 
+### Documentation
+
+The documentation can be found at http://mooti.github.io/docs
+
 ### Installation
 
 You can install this through packagist

@@ -35,8 +35,12 @@ class Application extends AbstractApplication
     public function runApplication()
     {
         $application = $this->createNew(SymfonyApplication::class, $this->getName());
-        foreach ($this->commands as $command) {
-            $application->add($this->createNew($command));
+        foreach ($this->commands as $commandClass) {
+            $command = $this->createNew($commandClass);
+            $application->add($command);
+            if ($command instanceof Command && $command->isDefaultCommand()) {            
+                $application->setDefaultCommand($command->getName());
+            }
         }        
         $application->run();
     }
