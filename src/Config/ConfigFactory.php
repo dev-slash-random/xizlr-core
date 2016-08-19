@@ -26,9 +26,9 @@ class ConfigFactory
     protected $configs = [];
 
     /**
-     * Get a config
+     * Set a config     
      *
-     * @param string $configName The name of the config. This namespaced (i.e Mooti/Framework/Database)
+     * @param string $configName The name of the config.
      *
      */
     public function setConfig($configName, AbstractConfig $config)
@@ -37,9 +37,10 @@ class ConfigFactory
     }
 
     /**
-     * Get a config
+     * Get a config using a is namespaced config name.
+     * This uses camel case and dot notation (i.e mooti.test.fooBar)
      *
-     * @param string $configName The name of the config. This namespaced (i.e Mooti/Framework/Database)
+     * @param string $configName The name of the config.
      *
      */
     public function getConfig($configName)
@@ -51,7 +52,7 @@ class ConfigFactory
         $applicationRootDirectory = $this->get(ServiceProvider::APPLICATION_RUNTIME)->getRootDirectory();
         $configDirectoryPath = $applicationRootDirectory . '/config/';
 
-        $configNameParts = explode('/', $configName);
+        $configNameParts = array_map(function ($item) { return ucfirst($item); }, explode('.', $configName));
 
         $lastPart = array_pop($configNameParts);
 

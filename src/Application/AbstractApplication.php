@@ -22,6 +22,20 @@ abstract class AbstractApplication
 {
     use Framework;
 
+    /** @var string The root directory of the application */
+    protected $config;
+
+
+    /**
+     * Set the application name
+     *
+     * @param string $name The application name
+     */
+    public function setName($config)
+    {
+        $this->get(ServiceProvider::APPLICATION_RUNTIME)->setName($name);
+    }
+
     /**
      * Set the application name
      *
